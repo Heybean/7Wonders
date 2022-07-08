@@ -13,6 +13,7 @@ function onObjectDrop(player, object)
 end
 
 function symbolClicked(player, value, id)
+    self.UI.setAttribute(id, "isOn", value)
     if value == "True" then
         SelectedScience = id
     else
