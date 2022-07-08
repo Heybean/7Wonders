@@ -1,7 +1,7 @@
 {
   "SaveName": "7 Wonders (Second Edition)",
-  "EpochTime": 1657288401,
-  "Date": "7/8/2022 6:53:21 AM",
+  "EpochTime": 1657315681,
+  "Date": "7/8/2022 2:28:01 PM",
   "VersionNumber": "v13.1.1",
   "GameMode": "7 Wonders (2nd Ed)",
   "GameType": "Game",
@@ -318,7 +318,7 @@
     "TurnColor": ""
   },
   "DecalPallet": [],
-  "LuaScript": "XmlInit = {}\n\nValidColors = {\n     Blue=7,\n     Orange=6,\n     Green=5,\n     Yellow=4,\n     Red=3,\n     Purple=2,\n     White=1\n}\n\nPlayerReadyStatus = {}\nTurnOrder = {\"White\", \"Purple\", \"Red\", \"Yellow\", \"Green\", \"Orange\", \"Blue\"}\nHandZones = {\n     [\"3cd1b3\"] = \"White\",\n     [\"b57286\"] = \"Purple\",\n     [\"e22332\"] = \"Red\",\n     [\"4579a4\"] = \"Yellow\",\n     [\"a350d0\"] = \"Green\",\n     [\"9ac6fd\"] = \"Orange\",\n     [\"088bd4\"] = \"Blue\",\n}\nCurrentPlayedCard = {}\n\nfunction onSave()\nend\n\nfunction onLoad(saved_data)\n     ScoreSheet = getObjectFromGUID(\"1b8ed7\")\n     XmlInit = self.UI.getXmlTable()\n\n     populateStatusPanelUI()\nend\n\nfunction registerSingleObject(player, tag)\n     for _, obj in pairs(getObjectsWithTag(tag)) do\n          local owner = obj.getVar(\"owner\")\n          if owner == player then\n               obj.setVar(\"owner\", nil)\n               obj.highlightOff()\n               break\n          end\n     end\nend\n\nfunction onObjectDrop(player, object)\n     if object.hasTag(\"Score\") then\n          if object.type == \"Deck\" then\n               object.setVar(\"owner\", nil)\n               object.highlightOff()\n               return\n          end\n\n          if #object.getZones() > 0 then return end\n\n          -- register only one wonder per player\n          if object.hasTag(\"Wonder\") then\n               registerSingleObject(player, \"Wonder\")\n          elseif object.hasTag(\"Shipyard\") then\n               registerSingleObject(player, \"Shipyard\")\n          end\n\n          object.setVar(\"owner\", player)\n          if ScoreSheet.getVar(\"ShowHighlight\") then\n               object.highlightOn(player)\n          end\n\n          if CurrentPlayedCard[player] == object.getGUID() then\n               PlayerReadyStatus[player] = true\n               updatePlayerReadyStatusUI(player)\n          end\n     end\nend\n\nfunction onObjectEnterZone(zone, object)\n     local zoneOwner = HandZones[zone.getGUID()]\n\n     if object.hasTag(\"Score\") and object.getVar(\"owner\") then\n          object.setVar(\"owner\", nil)\n          object.highlightOff()\n\n          -- init if no entry\n          if object.held_by_color and not CurrentPlayedCard[object.held_by_color] then\n               CurrentPlayedCard[object.held_by_color] = nil\n          end\n\n          if object.type == 'Card' then\n               object.clearButtons()\n\n               if CurrentPlayedCard[zoneOwner] == object.getGUID() then\n                    PlayerReadyStatus[zoneOwner] = false\n                    updatePlayerReadyStatusUI(zoneOwner)\n               end\n          end\n     end\nend\n\nfunction onObjectLeaveZone(zone, object)\n     local zoneOwner = HandZones[zone.getGUID()]\n\n     if object.type == 'Card' and object.held_by_color == zoneOwner then\n          -- player has taken card of from own hand\n          CurrentPlayedCard[zoneOwner] = object.getGUID()\n     end\nend\n\nfunction getValidSeatedPlayers()\n     SeatedPlayerCount = 0\n     SeatedPlayers = {}\n\n     if Turns.type == 1 then\n          Turns.type = 2\n          Turns.order = TurnOrder\n     end\n\n     for i=1, #TurnOrder do\n          if Player[TurnOrder[i]].seated then\n               SeatedPlayerCount = SeatedPlayerCount + 1\n               SeatedPlayers[#SeatedPlayers + 1] = Player[TurnOrder[i]]\n          end\n     end\n     return SeatedPlayers\nend\n\nfunction split(str, delimiter)\n     local fields = {}\n\n     local sep = delimiter or \" \"\n     local pattern = string.format(\"([^%s]+)\", delimiter)\n     string.gsub(str, pattern, function(c) fields[#fields + 1] = c end)\n\n     return fields\nend\n\nfunction uiSetVisibilityToPlayer(id, playerColor, visible)\n     local attr = UI.getAttribute(id, \"visibility\")\n     if visible then\n          attr = attr .. \"|\" .. playerColor\n     else\n          local newAttr = \"\"\n          tokens = split(attr, \"|\")\n\n          for i=1, #tokens do\n               if tokens[i] ~= playerColor then\n                    newAttr = newAttr .. tokens[i] .. \"|\"\n               end\n          end\n\n          if newAttr == \"\" then\n               attr = \"Black\"\n          else\n               attr = newAttr:sub(1, newAttr:len() - 1)\n          end\n     end\n\n     UI.setAttribute(id, \"visibility\", attr)\nend\n\nfunction showPanelClick(player)\n     local vis = self.UI.getAttribute(\"statusPanel\", \"visibility\")\n     uiSetVisibilityToPlayer(\"statusPanel\", player.color, not string.find(vis, player.color))\nend\n\nfunction closePanelClick(player)\n     uiSetVisibilityToPlayer(\"statusPanel\", player.color, false)\nend\n\nfunction onPlayerChangeColor(player_color)\n     populateStatusPanelUI()\nend\n\nfunction populateStatusPanelUI()\n     local players = getValidSeatedPlayers()\n     local entries = {}\n\n     for _, player in pairs(players) do\n          if not PlayerReadyStatus[player.color] then\n               PlayerReadyStatus[player.color] = false\n          end\n\n          local statusTxt = {\n               tag            = \"Text\",\n               value          = \"\",\n               attributes     = {id = \"statusTxt_\" .. player.color, class=\"rdy\"},\n               children       = {}\n          }\n\n          local statusPanel = {\n               tag            = \"Panel\",\n               attributes     = {id = \"statusBg_\" .. player.color, color=\"Black\"},\n               children       = {statusTxt}\n          }\n\n          local statusCell = {\n               tag            = \"Cell\",\n               attributes     = {},\n               children       = {statusPanel}\n          }\n\n          local playerNameTxt = {\n               tag            = \"Text\",\n               value          = player.steam_name or player.color,\n               attributes     = {color = player.color, class = \"name\"},\n               children       = {}\n          }\n\n          local playerNameCell = {\n               tag            = \"Cell\",\n               attributes     = {},\n               children       = {playerNameTxt}\n          }\n\n          local row = {\n               tag            = \"Row\",\n               attributes     = {},\n               children       = {statusCell, playerNameCell}\n          }\n\n          entries[#entries + 1] = row\n     end\n\n     XmlInit[4].children[1].children[3].children = entries\n     self.UI.setXmlTable(XmlInit)\n\n     -- must wait before we can update the UI\n     Wait.frames(function()\n          local panelH = 150\n          local spacing = 5\n          local rowH = 32\n\n          if #players > 3 then\n               self.UI.setAttribute(\"statusPanel\", \"height\", panelH + (rowH + spacing) * (#players - 3))\n          end\n\n          for _, player in pairs(players) do\n               updatePlayerReadyStatusUI(player.color)\n          end\n     end, 2)\nend\n\nfunction updatePlayerReadyStatusUI(playerColor)\n     self.UI.setAttribute(\"statusBg_\" .. playerColor, \"color\", PlayerReadyStatus[playerColor] and \"Green\" or \"Red\")\n     self.UI.setValue(\"statusTxt_\" .. playerColor, PlayerReadyStatus[playerColor] and \"✔\" or \"✘\")\nend\n\nfunction resetPlayerReadyStatus()\n     local players = getValidSeatedPlayers()\n\n     for _, player in pairs(players) do\n          CurrentPlayedCard[player.color] = nil\n          PlayerReadyStatus[player.color] = false\n          updatePlayerReadyStatusUI(player.color)\n     end\nend",
+  "LuaScript": "XmlInit = {}\n\nValidColors = {\n     Blue=7,\n     Orange=6,\n     Green=5,\n     Yellow=4,\n     Red=3,\n     Purple=2,\n     White=1\n}\n\nPlayerReadyStatus = {}\nTurnOrder = {\"White\", \"Purple\", \"Red\", \"Yellow\", \"Green\", \"Orange\", \"Blue\"}\nHandZones = {\n     [\"3cd1b3\"] = \"White\",\n     [\"b57286\"] = \"Purple\",\n     [\"e22332\"] = \"Red\",\n     [\"4579a4\"] = \"Yellow\",\n     [\"a350d0\"] = \"Green\",\n     [\"9ac6fd\"] = \"Orange\",\n     [\"088bd4\"] = \"Blue\",\n}\nCurrentPlayedCard = {}\n\nfunction onSave()\nend\n\nfunction onLoad(saved_data)\n     ScoreSheet = getObjectFromGUID(\"1b8ed7\")\n     XmlInit = self.UI.getXmlTable()\n\n     populateStatusPanelUI()\nend\n\nfunction registerSingleObject(player, tag)\n     for _, obj in pairs(getObjectsWithTag(tag)) do\n          local owner = obj.getVar(\"owner\")\n          if owner == player then\n               obj.setVar(\"owner\", nil)\n               obj.highlightOff()\n               break\n          end\n     end\nend\n\nfunction onObjectDrop(player, object)\n     if object.hasTag(\"Score\") then\n          if object.type == \"Deck\" then\n               object.setVar(\"owner\", nil)\n               object.highlightOff()\n               return\n          end\n\n          if #object.getZones() > 0 then return end\n\n          -- register only one wonder per player\n          if object.hasTag(\"Wonder\") then\n               registerSingleObject(player, \"Wonder\")\n          elseif object.hasTag(\"Shipyard\") then\n               registerSingleObject(player, \"Shipyard\")\n          end\n\n          object.setVar(\"owner\", player)\n          if ScoreSheet.getVar(\"ShowHighlight\") then\n               object.highlightOn(player)\n          end\n\n          if CurrentPlayedCard[player] == object.getGUID() then\n               PlayerReadyStatus[player] = true\n               updatePlayerReadyStatusUI(player)\n          end\n     end\nend\n\nfunction onObjectEnterZone(zone, object)\n     local zoneOwner = HandZones[zone.getGUID()]\n\n     if object.hasTag(\"Score\") and object.getVar(\"owner\") then\n          object.setVar(\"owner\", nil)\n          object.highlightOff()\n\n          if object.type == 'Card' then\n               object.clearButtons()\n          end\n     end\n\n     if object.hasTag(\"Score\") then\n          if CurrentPlayedCard[zoneOwner] == object.getGUID() then\n               PlayerReadyStatus[zoneOwner] = false\n               updatePlayerReadyStatusUI(zoneOwner)\n          end\n     end\nend\n\nfunction onObjectLeaveZone(zone, object)\n     local zoneOwner = HandZones[zone.getGUID()]\n\n     if object.type == 'Card' and object.held_by_color == zoneOwner then\n          -- player has taken card of from own hand\n          CurrentPlayedCard[zoneOwner] = object.getGUID()\n     end\nend\n\nfunction getValidSeatedPlayers()\n     SeatedPlayerCount = 0\n     SeatedPlayers = {}\n\n     if Turns.type == 1 then\n          Turns.type = 2\n          Turns.order = TurnOrder\n     end\n\n     for i=1, #TurnOrder do\n          if Player[TurnOrder[i]].seated then\n               SeatedPlayerCount = SeatedPlayerCount + 1\n               SeatedPlayers[#SeatedPlayers + 1] = Player[TurnOrder[i]]\n          end\n     end\n     return SeatedPlayers\nend\n\nfunction split(str, delimiter)\n     local fields = {}\n\n     local sep = delimiter or \" \"\n     local pattern = string.format(\"([^%s]+)\", delimiter)\n     string.gsub(str, pattern, function(c) fields[#fields + 1] = c end)\n\n     return fields\nend\n\nfunction uiSetVisibilityToPlayer(id, playerColor, visible)\n     local attr = UI.getAttribute(id, \"visibility\")\n     if visible then\n          attr = attr .. \"|\" .. playerColor\n     else\n          local newAttr = \"\"\n          tokens = split(attr, \"|\")\n\n          for i=1, #tokens do\n               if tokens[i] ~= playerColor then\n                    newAttr = newAttr .. tokens[i] .. \"|\"\n               end\n          end\n\n          if newAttr == \"\" then\n               attr = \"Black\"\n          else\n               attr = newAttr:sub(1, newAttr:len() - 1)\n          end\n     end\n\n     UI.setAttribute(id, \"visibility\", attr)\nend\n\nfunction showPanelClick(player)\n     local vis = self.UI.getAttribute(\"statusPanel\", \"visibility\")\n     uiSetVisibilityToPlayer(\"statusPanel\", player.color, not string.find(vis, player.color))\nend\n\nfunction closePanelClick(player)\n     uiSetVisibilityToPlayer(\"statusPanel\", player.color, false)\nend\n\nfunction onPlayerChangeColor(player_color)\n     populateStatusPanelUI()\nend\n\nfunction populateStatusPanelUI()\n     local players = getValidSeatedPlayers()\n     local entries = {}\n\n     for _, player in pairs(players) do\n          if not PlayerReadyStatus[player.color] then\n               PlayerReadyStatus[player.color] = false\n          end\n\n          local statusTxt = {\n               tag            = \"Text\",\n               value          = \"\",\n               attributes     = {id = \"statusTxt_\" .. player.color, class=\"rdy\"},\n               children       = {}\n          }\n\n          local statusPanel = {\n               tag            = \"Panel\",\n               attributes     = {id = \"statusBg_\" .. player.color, color=\"Black\"},\n               children       = {statusTxt}\n          }\n\n          local statusCell = {\n               tag            = \"Cell\",\n               attributes     = {},\n               children       = {statusPanel}\n          }\n\n          local playerNameTxt = {\n               tag            = \"Text\",\n               value          = player.steam_name or player.color,\n               attributes     = {color = player.color, class = \"name\"},\n               children       = {}\n          }\n\n          local playerNameCell = {\n               tag            = \"Cell\",\n               attributes     = {},\n               children       = {playerNameTxt}\n          }\n\n          local row = {\n               tag            = \"Row\",\n               attributes     = {},\n               children       = {statusCell, playerNameCell}\n          }\n\n          entries[#entries + 1] = row\n     end\n\n     XmlInit[4].children[1].children[3].children = entries\n     self.UI.setXmlTable(XmlInit)\n\n     -- must wait before we can update the UI\n     Wait.frames(function()\n          local panelH = 150\n          local spacing = 5\n          local rowH = 32\n\n          if #players > 3 then\n               self.UI.setAttribute(\"statusPanel\", \"height\", panelH + (rowH + spacing) * (#players - 3))\n          end\n\n          for _, player in pairs(players) do\n               updatePlayerReadyStatusUI(player.color)\n          end\n     end, 2)\nend\n\nfunction updatePlayerReadyStatusUI(playerColor)\n     self.UI.setAttribute(\"statusBg_\" .. playerColor, \"color\", PlayerReadyStatus[playerColor] and \"#2fcc5c\" or \"#bd170b\")\n     self.UI.setValue(\"statusTxt_\" .. playerColor, PlayerReadyStatus[playerColor] and \"✔\" or \"✘\")\nend\n\nfunction resetPlayerReadyStatus()\n     local players = getValidSeatedPlayers()\n\n     for _, player in pairs(players) do\n          CurrentPlayedCard[player.color] = nil\n          PlayerReadyStatus[player.color] = false\n          updatePlayerReadyStatusUI(player.color)\n     end\nend",
   "LuaScriptState": "",
   "XmlUI": "<Defaults>\r\n    <Text class=\"label\" fontSize=\"16\" color=\"White\"/>\r\n    <Text class=\"name\" color=\"White\" fontSize=\"20\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" />\r\n    <Text class=\"rdy\" color=\"White\" fontSize=\"26\" fontStyle=\"Bold\" />\r\n    <Row preferredHeight=\"32\" />\r\n    <Cell dontUseTableCellBackground=\"true\" />\r\n</Defaults>\r\n<Image image=\"compass\" active=\"false\"/>\r\n\r\n<Button width=\"120\" height=\"30\" fontSize=\"16\" fontStyle=\"Bold\" rectAlignment=\"UpperCenter\" offsetXY=\"560 -8\" onClick=\"showPanelClick\">Show Status</Button>\r\n\r\n<Panel id=\"statusPanel\" width=\"200\" padding=\"5\" height=\"150\" color=\"#000000CC\" allowDragging=\"True\" returnToOriginalPositionWhenReleased=\"false\" rectAlignment=\"UpperCenter\"\r\n    offsetXY=\"600 -46\" visibility=\"White|Purple|Yellow|Red|Orange|Blue|Green|Black\">\r\n    <Panel>\r\n        <Text class=\"label\" color=\"Gray\" alignment=\"UpperCenter\" offsetXY=\"0 -3\">Status</Text>\r\n        <Button rectAlignment=\"UpperRight\" fontSize=\"16\" width=\"26\" height=\"26\" onClick=\"closePanelClick\">X</Button>\r\n        <TableLayout columnWidths=\"32 0\" cellSpacing=\"5\" offsetXY=\"0 -30\">\r\n        </TableLayout>\r\n    </Panel>\r\n</Panel>",
   "CustomUIAssets": [
@@ -606,9 +606,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.304805458,
-        "g": 0.149608254,
-        "b": 0.04615771
+        "r": 0.304805338,
+        "g": 0.149608135,
+        "b": 0.04615763
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -799,7 +799,7 @@
       "ColorDiffuse": {
         "r": 0.60452956,
         "g": 0.5999471,
-        "b": 0.173772722
+        "b": 0.173772663
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -898,8 +898,8 @@
       "GMNotes": "",
       "ColorDiffuse": {
         "r": 0.52439,
-        "g": 0.3111592,
-        "b": 0.1690076
+        "g": 0.3111591,
+        "b": 0.16900754
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -1084,7 +1084,7 @@
       "Name": "Bag",
       "Transform": {
         "posX": 63.0003357,
-        "posY": 1.40465426,
+        "posY": 1.40465379,
         "posZ": -14.0005541,
         "rotX": -0.0008484407,
         "rotY": 0.005790199,
@@ -1097,7 +1097,7 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.113722183,
+        "r": 0.113722123,
         "g": 0.5453312,
         "b": 1.0
       },
@@ -3902,9 +3902,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.191996872,
+        "r": 0.191996813,
         "g": 0.701,
-        "b": 0.167996854
+        "b": 0.1679968
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4095,7 +4095,7 @@
       "ColorDiffuse": {
         "r": 0.905,
         "g": 0.898,
-        "b": 0.171996862
+        "b": 0.1719968
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4191,8 +4191,8 @@
       "GMNotes": "",
       "ColorDiffuse": {
         "r": 0.856,
-        "g": 0.09999681,
-        "b": 0.0939968154
+        "g": 0.09999677,
+        "b": 0.0939967558
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4271,11 +4271,11 @@
       "Name": "Bag",
       "Transform": {
         "posX": 64.49977,
-        "posY": 1.40522885,
+        "posY": 1.40521908,
         "posZ": 25.5003815,
-        "rotX": -0.0008471903,
+        "rotX": -0.000847185438,
         "rotY": 359.986,
-        "rotZ": -1.93584E-06,
+        "rotZ": -3.21816833E-06,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -4724,9 +4724,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.09803628,
-        "g": 0.09803628,
-        "b": 0.09803628
+        "r": 0.09803622,
+        "g": 0.09803622,
+        "b": 0.09803622
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4824,9 +4824,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.09803628,
-        "g": 0.09803628,
-        "b": 0.09803628
+        "r": 0.09803622,
+        "g": 0.09803622,
+        "b": 0.09803622
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4924,9 +4924,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.09803628,
-        "g": 0.09803628,
-        "b": 0.09803628
+        "r": 0.09803622,
+        "g": 0.09803622,
+        "b": 0.09803622
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -5024,9 +5024,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.09803628,
-        "g": 0.09803628,
-        "b": 0.09803628
+        "r": 0.09803622,
+        "g": 0.09803622,
+        "b": 0.09803622
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -5813,7 +5813,7 @@
         "posX": 64.49961,
         "posY": 1.57287431,
         "posZ": -1.50057721,
-        "rotX": -0.000847384334,
+        "rotX": -0.000847384566,
         "rotY": 359.981964,
         "rotZ": 5.5951574E-07,
         "scaleX": 1.0,
@@ -6235,9 +6235,9 @@
         "posX": 68.0,
         "posY": 1.59036958,
         "posZ": 32.0007324,
-        "rotX": 0.0008468099,
+        "rotX": 0.0008468101,
         "rotY": 180.027649,
-        "rotZ": 3.91337437E-07,
+        "rotZ": 3.91337551E-07,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -6326,9 +6326,9 @@
       "Transform": {
         "posX": 89.50007,
         "posY": 1.60359752,
-        "posZ": 6.5001173,
-        "rotX": 0.0008468214,
-        "rotY": 179.999878,
+        "posZ": 6.50012,
+        "rotX": 0.0008469399,
+        "rotY": 179.9999,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -6379,10 +6379,10 @@
       "Transform": {
         "posX": 75.12662,
         "posY": 1.58950627,
-        "posZ": -26.4113922,
-        "rotX": 0.0008467584,
-        "rotY": 179.984711,
-        "rotZ": -1.3355212E-07,
+        "posZ": -26.4114265,
+        "rotX": 0.0008468051,
+        "rotY": 179.984787,
+        "rotZ": -1.90584146E-07,
         "scaleX": 8.537561,
         "scaleY": 1.0,
         "scaleZ": 8.537561
@@ -6430,9 +6430,9 @@
       "Transform": {
         "posX": 87.50014,
         "posY": 1.65947747,
-        "posZ": 34.5007362,
-        "rotX": 0.000846918963,
-        "rotY": 180.000519,
+        "posZ": 34.5007553,
+        "rotX": 0.0008468445,
+        "rotY": 180.000626,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -7075,8 +7075,8 @@
       "Transform": {
         "posX": 90.50015,
         "posY": 1.62096512,
-        "posZ": 34.50092,
-        "rotX": 0.000847531366,
+        "posZ": 34.5009346,
+        "rotX": 0.0008466973,
         "rotY": 179.999878,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
@@ -7249,9 +7249,9 @@
       "Transform": {
         "posX": 81.50029,
         "posY": 1.71237266,
-        "posZ": 30.5010185,
-        "rotX": 0.0008467172,
-        "rotY": 180.000778,
+        "posZ": 30.5010357,
+        "rotX": 0.0008467707,
+        "rotY": 180.0008,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -8538,9 +8538,9 @@
       "Transform": {
         "posX": 81.49992,
         "posY": 1.64491713,
-        "posZ": 26.5006657,
-        "rotX": 0.0008471715,
-        "rotY": 180.000565,
+        "posZ": 26.50068,
+        "rotX": 0.00084661477,
+        "rotY": 180.000656,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -9000,9 +9000,9 @@
       "Transform": {
         "posX": 81.5,
         "posY": 1.644858,
-        "posZ": 22.5005417,
-        "rotX": 0.0008466047,
-        "rotY": 180.000153,
+        "posZ": 22.5005569,
+        "rotX": 0.0008469679,
+        "rotY": 180.000229,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -9462,9 +9462,9 @@
       "Transform": {
         "posX": 81.50001,
         "posY": 1.64479887,
-        "posZ": 18.50045,
-        "rotX": 0.0008466202,
-        "rotY": 179.999542,
+        "posZ": 18.50046,
+        "rotX": 0.000846994168,
+        "rotY": 179.999573,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -9924,9 +9924,9 @@
       "Transform": {
         "posX": 84.51725,
         "posY": 1.71237266,
-        "posZ": 30.5007267,
-        "rotX": 0.0008472269,
-        "rotY": 180.0004,
+        "posZ": 30.500742,
+        "rotX": 0.000847071933,
+        "rotY": 180.000366,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -11198,9 +11198,9 @@
       "Transform": {
         "posX": 84.49998,
         "posY": 1.64491713,
-        "posZ": 26.5006313,
-        "rotX": 0.0008470376,
-        "rotY": 179.9999,
+        "posZ": 26.5006428,
+        "rotX": 0.000847107847,
+        "rotY": 180.0,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -11660,9 +11660,9 @@
       "Transform": {
         "posX": 84.50001,
         "posY": 1.644858,
-        "posZ": 22.5005627,
-        "rotX": 0.0008470411,
-        "rotY": 179.998932,
+        "posZ": 22.5005741,
+        "rotX": 0.000847596442,
+        "rotY": 179.998978,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -12122,9 +12122,9 @@
       "Transform": {
         "posX": 87.50001,
         "posY": 1.68830252,
-        "posZ": 30.5007763,
-        "rotX": 0.000846531941,
-        "rotY": 179.998215,
+        "posZ": 30.5007935,
+        "rotX": 0.0008468943,
+        "rotY": 179.998184,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -13105,10 +13105,10 @@
       "Name": "Deck",
       "Transform": {
         "posX": 87.5,
-        "posY": 1.640103,
-        "posZ": 26.5006332,
-        "rotX": 0.0008469234,
-        "rotY": 179.999054,
+        "posY": 1.6401031,
+        "posZ": 26.5006485,
+        "rotX": 0.00084687,
+        "rotY": 179.998962,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -13510,9 +13510,9 @@
       "Transform": {
         "posX": 87.4973,
         "posY": 1.640044,
-        "posZ": 22.5008335,
-        "rotX": 0.0008468945,
-        "rotY": 180.000366,
+        "posZ": 22.5008469,
+        "rotX": 0.000847065763,
+        "rotY": 180.000381,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -13914,9 +13914,9 @@
       "Transform": {
         "posX": 87.49928,
         "posY": 1.63998485,
-        "posZ": 18.5006313,
-        "rotX": 0.0008466743,
-        "rotY": 180.0001,
+        "posZ": 18.5006428,
+        "rotX": 0.000846771465,
+        "rotY": 180.000183,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -14318,8 +14318,8 @@
       "Transform": {
         "posX": 87.5000153,
         "posY": 1.63992572,
-        "posZ": 14.5003605,
-        "rotX": 0.0008465926,
+        "posZ": 14.5003681,
+        "rotX": 0.0008469847,
         "rotY": 180.000549,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
@@ -14723,7 +14723,7 @@
         "posX": 80.5000153,
         "posY": 1.67818677,
         "posZ": -2.500039,
-        "rotX": 0.000846829964,
+        "rotX": 0.0008469032,
         "rotY": 180.0002,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
@@ -15590,8 +15590,8 @@
       "Transform": {
         "posX": 83.5000153,
         "posY": 1.67818677,
-        "posZ": -2.50004816,
-        "rotX": 0.0008467745,
+        "posZ": -2.50004864,
+        "rotX": 0.0008468631,
         "rotY": 180.000381,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
@@ -16458,9 +16458,9 @@
       "Transform": {
         "posX": 86.49995,
         "posY": 1.67818677,
-        "posZ": -2.500114,
-        "rotX": 0.000846832467,
-        "rotY": 180.000519,
+        "posZ": -2.50011516,
+        "rotX": 0.0008469132,
+        "rotY": 180.000565,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -17326,8 +17326,8 @@
       "Transform": {
         "posX": 85.07184,
         "posY": 1.65377164,
-        "posZ": -25.83488,
-        "rotX": 9.80193E-07,
+        "posZ": -25.8348942,
+        "rotX": 2.54375976E-07,
         "rotY": 89.99994,
         "rotZ": 179.999161,
         "scaleX": 1.25705588,
@@ -17895,9 +17895,9 @@
       "Transform": {
         "posX": 85.07173,
         "posY": 1.653816,
-        "posZ": -22.8344955,
-        "rotX": -4.10107326E-08,
-        "rotY": 90.00008,
+        "posZ": -22.834507,
+        "rotX": 2.01927062E-08,
+        "rotY": 90.00013,
         "rotZ": 179.999161,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -18464,9 +18464,9 @@
       "Transform": {
         "posX": 85.07181,
         "posY": 1.65386033,
-        "posZ": -19.8344669,
-        "rotX": -9.116681E-08,
-        "rotY": 89.99999,
+        "posZ": -19.8344765,
+        "rotX": 6.11252744E-07,
+        "rotY": 90.0,
         "rotZ": 179.999161,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -19033,9 +19033,9 @@
       "Transform": {
         "posX": 82.0716858,
         "posY": 1.63955128,
-        "posZ": -10.8341665,
-        "rotX": 0.0008471089,
-        "rotY": 180.0002,
+        "posZ": -10.8341722,
+        "rotX": 0.000846909767,
+        "rotY": 180.000214,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -19431,9 +19431,9 @@
       "Transform": {
         "posX": 85.07178,
         "posY": 1.63955128,
-        "posZ": -10.8342094,
-        "rotX": 0.000846950337,
-        "rotY": 180.000076,
+        "posZ": -10.8342142,
+        "rotX": 0.000846840034,
+        "rotY": 180.000122,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -19829,9 +19829,9 @@
       "Transform": {
         "posX": 88.0719147,
         "posY": 1.64436531,
-        "posZ": -10.8341589,
-        "rotX": 0.000846976938,
-        "rotY": 180.000275,
+        "posZ": -10.8341646,
+        "rotX": 0.0008468389,
+        "rotY": 180.00032,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -20284,9 +20284,9 @@
       "Transform": {
         "posX": 86.50009,
         "posY": 1.63980746,
-        "posZ": 6.50016832,
-        "rotX": 0.0008469089,
-        "rotY": 180.000122,
+        "posZ": 6.50017166,
+        "rotX": 0.000846690731,
+        "rotY": 180.000137,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -20682,9 +20682,9 @@
       "Transform": {
         "posX": 83.50006,
         "posY": 1.68313384,
-        "posZ": 6.500212,
-        "rotX": 0.0008462633,
-        "rotY": 180.000122,
+        "posZ": 6.500222,
+        "rotX": 0.0008470197,
+        "rotY": 180.0002,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -20749,12 +20749,12 @@
           "GUID": "0cce5b",
           "Name": "Card",
           "Transform": {
-            "posX": 83.52318,
-            "posY": 1.80830407,
-            "posZ": 6.06004667,
-            "rotX": 0.0007199615,
-            "rotY": 180.0,
-            "rotZ": 179.303238,
+            "posX": 82.95986,
+            "posY": 1.90903437,
+            "posZ": 5.89273643,
+            "rotX": -0.00320202485,
+            "rotY": 180.004379,
+            "rotZ": 183.032822,
             "scaleX": 1.25705588,
             "scaleY": 1.0,
             "scaleZ": 1.25705588
@@ -20797,7 +20797,7 @@
               "Type": 0
             }
           },
-          "LuaScript": "-- Bundled by luabundle {\"rootModuleName\":\"Aganice.0cce5b.lua\",\"version\":\"1.6.0\"}\nlocal __bundle_require, __bundle_loaded, __bundle_register, __bundle_modules = (function(superRequire)\n\tlocal loadingPlaceholder = {[{}] = true}\n\n\tlocal register\n\tlocal modules = {}\n\n\tlocal require\n\tlocal loaded = {}\n\n\tregister = function(name, body)\n\t\tif not modules[name] then\n\t\t\tmodules[name] = body\n\t\tend\n\tend\n\n\trequire = function(name)\n\t\tlocal loadedModule = loaded[name]\n\n\t\tif loadedModule then\n\t\t\tif loadedModule == loadingPlaceholder then\n\t\t\t\treturn nil\n\t\t\tend\n\t\telse\n\t\t\tif not modules[name] then\n\t\t\t\tif not superRequire then\n\t\t\t\t\tlocal identifier = type(name) == 'string' and '\\\"' .. name .. '\\\"' or tostring(name)\n\t\t\t\t\terror('Tried to require ' .. identifier .. ', but no such module has been registered')\n\t\t\t\telse\n\t\t\t\t\treturn superRequire(name)\n\t\t\t\tend\n\t\t\tend\n\n\t\t\tloaded[name] = loadingPlaceholder\n\t\t\tloadedModule = modules[name](require, loaded, register, modules)\n\t\t\tloaded[name] = loadedModule\n\t\tend\n\n\t\treturn loadedModule\n\tend\n\n\treturn require, loaded, register, modules\nend)(nil)\n__bundle_register(\"Aganice.0cce5b.lua\", function(require, _LOADED, __bundle_register, __bundle_modules)\nrequire(\"SevenWonders/scienceSelector\")\r\n\r\nSelectedSource = \"\"\r\nSelectedDest = \"compass\"\r\n\r\nfunction onload()\r\n    self.UI.setXml([[<Defaults>\r\n    <Text fontStyle=\"Bold\" fontSize=\"30\" alignment=\"MiddleLeft\" color=\"#000000\"/>\r\n    <ToggleButton padding=\"10\" colors=\"White|Blue|#4444AA|Yellow\"/>\r\n</Defaults>\r\n\r\n<Panel id=\"scienceSelect\" position=\"0 50 -30\" width=\"200\" height=\"300\" rotation=\"0 0 180\" scale=\"0.5\">\r\n    <VerticalLayout>\r\n        <Text>Replace</Text>\r\n        <ToggleGroup allowSwitchOff=\"true\">\r\n            <HorizontalLayout>\r\n                <ToggleButton id=\"sourceCompass\" onValueChanged=\"sourceClick\"><Panel padding=\"3\"><Image image=\"compass\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"sourceTablet\" onValueChanged=\"sourceClick\"><Panel padding=\"3\"><Image image=\"tablet\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"sourceGear\" onValueChanged=\"sourceClick\"><Panel padding=\"3\"><Image image=\"gear\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n            </HorizontalLayout>\r\n        </ToggleGroup>\r\n        <Text>With</Text>\r\n        <ToggleGroup>\r\n            <HorizontalLayout>\r\n                <ToggleButton id=\"destCompass\" onValueChanged=\"destClick\"><Panel padding=\"3\"><Image image=\"compass\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"destTablet\" onValueChanged=\"destClick\"><Panel padding=\"3\"><Image image=\"tablet\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"destGear\" onValueChanged=\"destClick\"><Panel padding=\"3\"><Image image=\"gear\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n            </HorizontalLayout>\r\n        </ToggleGroup>\r\n    </VerticalLayout>\r\n</Panel>]])\r\nend\r\n\r\nfunction sourceClick(player, value, id)\r\n    if value == \"True\" then\r\n        if id == \"sourceCompass\" then\r\n            SelectedSource = \"compass\"\r\n        elseif id == \"sourceTablet\" then\r\n            SelectedSource = \"tablet\"\r\n        elseif id == \"sourceGear\" then\r\n            SelectedSource = \"gear\"\r\n        end\r\n    else\r\n        SelectedSource = \"\"\r\n    end\r\nend\r\n\r\nfunction destClick(player, value, id)\r\n    if value == \"True\" then\r\n        if id == \"destCompass\" then\r\n            SelectedDest = \"compass\"\r\n        elseif id == \"destTablet\" then\r\n            SelectedDest = \"tablet\"\r\n        elseif id == \"destGear\" then\r\n            SelectedDest = \"gear\"\r\n        end\r\n    end\r\nend\nend)\n__bundle_register(\"SevenWonders/scienceSelector\", function(require, _LOADED, __bundle_register, __bundle_modules)\nSelectedScience = \"\"\r\n\r\nfunction onObjectEnterZone(zone, object)\r\n    if object == self then\r\n        self.UI.setAttribute(\"scienceSelect\", \"active\", false)\r\n    end\r\nend\r\n\r\nfunction onObjectDrop(player, object)\r\n    if object == self and #object.getZones() <= 0 then\r\n        self.UI.setAttribute(\"scienceSelect\", \"active\", true)\r\n    end\r\nend\r\n\r\nfunction symbolClicked(player, value, id)\r\n    if value == \"True\" then\r\n        SelectedScience = id\r\n    else\r\n        SelectedScience = \"\"\r\n    end\r\nend\nend)\nreturn __bundle_require(\"Aganice.0cce5b.lua\")",
+          "LuaScript": "-- Bundled by luabundle {\"rootModuleName\":\"Aganice.0cce5b.lua\",\"version\":\"1.6.0\"}\nlocal __bundle_require, __bundle_loaded, __bundle_register, __bundle_modules = (function(superRequire)\n\tlocal loadingPlaceholder = {[{}] = true}\n\n\tlocal register\n\tlocal modules = {}\n\n\tlocal require\n\tlocal loaded = {}\n\n\tregister = function(name, body)\n\t\tif not modules[name] then\n\t\t\tmodules[name] = body\n\t\tend\n\tend\n\n\trequire = function(name)\n\t\tlocal loadedModule = loaded[name]\n\n\t\tif loadedModule then\n\t\t\tif loadedModule == loadingPlaceholder then\n\t\t\t\treturn nil\n\t\t\tend\n\t\telse\n\t\t\tif not modules[name] then\n\t\t\t\tif not superRequire then\n\t\t\t\t\tlocal identifier = type(name) == 'string' and '\\\"' .. name .. '\\\"' or tostring(name)\n\t\t\t\t\terror('Tried to require ' .. identifier .. ', but no such module has been registered')\n\t\t\t\telse\n\t\t\t\t\treturn superRequire(name)\n\t\t\t\tend\n\t\t\tend\n\n\t\t\tloaded[name] = loadingPlaceholder\n\t\t\tloadedModule = modules[name](require, loaded, register, modules)\n\t\t\tloaded[name] = loadedModule\n\t\tend\n\n\t\treturn loadedModule\n\tend\n\n\treturn require, loaded, register, modules\nend)(nil)\n__bundle_register(\"Aganice.0cce5b.lua\", function(require, _LOADED, __bundle_register, __bundle_modules)\nrequire(\"SevenWonders/scienceSelector\")\r\n\r\nSelectedSource = \"\"\r\nSelectedDest = \"compass\"\r\n\r\nfunction onload()\r\n    self.UI.setXml([[<Defaults>\r\n    <Text fontStyle=\"Bold\" fontSize=\"30\" alignment=\"MiddleLeft\" color=\"#000000\"/>\r\n    <ToggleButton padding=\"10\" colors=\"White|Blue|#4444AA|Yellow\"/>\r\n</Defaults>\r\n\r\n<Panel id=\"scienceSelect\" position=\"0 50 -30\" width=\"200\" height=\"300\" rotation=\"0 0 180\" scale=\"0.5\">\r\n    <VerticalLayout>\r\n        <Text>Replace</Text>\r\n        <ToggleGroup allowSwitchOff=\"true\">\r\n            <HorizontalLayout>\r\n                <ToggleButton id=\"sourceCompass\" onValueChanged=\"sourceClick\"><Panel padding=\"3\"><Image image=\"compass\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"sourceTablet\" onValueChanged=\"sourceClick\"><Panel padding=\"3\"><Image image=\"tablet\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"sourceGear\" onValueChanged=\"sourceClick\"><Panel padding=\"3\"><Image image=\"gear\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n            </HorizontalLayout>\r\n        </ToggleGroup>\r\n        <Text>With</Text>\r\n        <ToggleGroup>\r\n            <HorizontalLayout>\r\n                <ToggleButton id=\"destCompass\" onValueChanged=\"destClick\"><Panel padding=\"3\"><Image image=\"compass\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"destTablet\" onValueChanged=\"destClick\"><Panel padding=\"3\"><Image image=\"tablet\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"destGear\" onValueChanged=\"destClick\"><Panel padding=\"3\"><Image image=\"gear\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n            </HorizontalLayout>\r\n        </ToggleGroup>\r\n    </VerticalLayout>\r\n</Panel>]])\r\nend\r\n\r\nfunction sourceClick(player, value, id)\r\n    if value == \"True\" then\r\n        if id == \"sourceCompass\" then\r\n            SelectedSource = \"compass\"\r\n        elseif id == \"sourceTablet\" then\r\n            SelectedSource = \"tablet\"\r\n        elseif id == \"sourceGear\" then\r\n            SelectedSource = \"gear\"\r\n        end\r\n    else\r\n        SelectedSource = \"\"\r\n    end\r\n\r\n    self.UI.setAttribute(id, \"isOn\", value)\r\nend\r\n\r\nfunction destClick(player, value, id)\r\n    if value == \"True\" then\r\n        if id == \"destCompass\" then\r\n            SelectedDest = \"compass\"\r\n        elseif id == \"destTablet\" then\r\n            SelectedDest = \"tablet\"\r\n        elseif id == \"destGear\" then\r\n            SelectedDest = \"gear\"\r\n        end\r\n    end\r\n\r\n    self.UI.setAttribute(id, \"isOn\", value)\r\nend\nend)\n__bundle_register(\"SevenWonders/scienceSelector\", function(require, _LOADED, __bundle_register, __bundle_modules)\nSelectedScience = \"\"\r\n\r\nfunction onObjectEnterZone(zone, object)\r\n    if object == self then\r\n        self.UI.setAttribute(\"scienceSelect\", \"active\", false)\r\n    end\r\nend\r\n\r\nfunction onObjectDrop(player, object)\r\n    if object == self and #object.getZones() <= 0 then\r\n        self.UI.setAttribute(\"scienceSelect\", \"active\", true)\r\n    end\r\nend\r\n\r\nfunction symbolClicked(player, value, id)\r\n    self.UI.setAttribute(id, \"isOn\", value)\r\n    if value == \"True\" then\r\n        SelectedScience = id\r\n    else\r\n        SelectedScience = \"\"\r\n    end\r\nend\nend)\nreturn __bundle_require(\"Aganice.0cce5b.lua\")",
           "LuaScriptState": "",
           "XmlUI": ""
         },
@@ -21593,9 +21593,9 @@
       "Transform": {
         "posX": 81.5,
         "posY": 1.64473975,
-        "posZ": 14.5003538,
-        "rotX": 0.000846795447,
-        "rotY": 179.998932,
+        "posZ": 14.5003614,
+        "rotX": 0.0008470732,
+        "rotY": 179.998825,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -22054,10 +22054,10 @@
       "Name": "Deck",
       "Transform": {
         "posX": 80.50006,
-        "posY": 1.77460051,
-        "posZ": 6.500163,
-        "rotX": 0.0008469134,
-        "rotY": 180.000381,
+        "posY": 1.77460039,
+        "posZ": 6.500168,
+        "rotX": 0.0008468218,
+        "rotY": 180.000412,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -24049,9 +24049,9 @@
       "Transform": {
         "posX": 84.50237,
         "posY": 1.64473975,
-        "posZ": 14.5000486,
-        "rotX": 0.000847017334,
-        "rotY": 180.001038,
+        "posZ": 14.5000582,
+        "rotX": 0.00084689667,
+        "rotY": 180.001175,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -24511,9 +24511,9 @@
       "Transform": {
         "posX": 84.49997,
         "posY": 1.64479887,
-        "posZ": 18.5004559,
-        "rotX": 0.000846775,
-        "rotY": 180.001022,
+        "posZ": 18.5004673,
+        "rotX": 0.0008465699,
+        "rotY": 180.001175,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -25665,8 +25665,8 @@
       "Transform": {
         "posX": 82.07173,
         "posY": 1.620236,
-        "posZ": -14.8343029,
-        "rotX": 0.0008466242,
+        "posZ": -14.83431,
+        "rotX": 0.0008470437,
         "rotY": 180.000137,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
@@ -25835,9 +25835,9 @@
       "Transform": {
         "posX": 85.07173,
         "posY": 1.620236,
-        "posZ": -14.8343086,
-        "rotX": 0.000846875,
-        "rotY": 180.000092,
+        "posZ": -14.8343163,
+        "rotX": 0.0008468513,
+        "rotY": 180.000061,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -26005,9 +26005,9 @@
       "Transform": {
         "posX": 88.07173,
         "posY": 1.60328221,
-        "posZ": -14.8343124,
-        "rotX": 0.00084667356,
-        "rotY": 180.000244,
+        "posZ": -14.834321,
+        "rotX": 0.0008467308,
+        "rotY": 180.0003,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -26056,12 +26056,12 @@
       "GUID": "e5a814",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 62.95038,
+        "posX": 62.95037,
         "posY": 1.59006882,
-        "posZ": 11.9576712,
-        "rotX": 0.0008766846,
-        "rotY": 180.000961,
-        "rotZ": 6.5283195E-05,
+        "posZ": 11.9576788,
+        "rotX": 0.0008769463,
+        "rotY": 180.000916,
+        "rotZ": 6.539787E-05,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -26112,12 +26112,12 @@
       "GUID": "508a61",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 62.94611,
+        "posX": 62.946106,
         "posY": 1.79003882,
-        "posZ": 11.954174,
-        "rotX": 0.000266878749,
-        "rotY": 179.99762,
-        "rotZ": 0.000278994936,
+        "posZ": 11.9541826,
+        "rotX": 0.000267689582,
+        "rotY": 179.997559,
+        "rotZ": 0.000278640568,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -26168,12 +26168,12 @@
       "GUID": "366fce",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 62.99966,
+        "posX": 62.9996529,
         "posY": 1.58996832,
-        "posZ": 5.000136,
-        "rotX": 0.000861350039,
-        "rotY": 180.016174,
-        "rotZ": 3.298074E-05,
+        "posZ": 5.000139,
+        "rotX": 0.000862147,
+        "rotY": 180.0161,
+        "rotZ": 3.292865E-05,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -26224,12 +26224,12 @@
       "GUID": "22d26c",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 63.0104332,
+        "posX": 63.0104256,
         "posY": 1.58976328,
-        "posZ": -9.026744,
-        "rotX": 0.000847254647,
-        "rotY": 180.003769,
-        "rotZ": 1.0181688E-07,
+        "posZ": -9.026748,
+        "rotX": 0.0008469459,
+        "rotY": 180.0037,
+        "rotZ": 4.94837771E-08,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -26280,12 +26280,12 @@
       "GUID": "7ab0fb",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 62.9996071,
-        "posY": 1.78995132,
-        "posZ": 5.00005245,
-        "rotX": 0.00107846467,
-        "rotY": 179.997635,
-        "rotZ": 0.0003267316,
+        "posX": 62.9995956,
+        "posY": 1.78995121,
+        "posZ": 5.00005531,
+        "rotX": 0.00108067808,
+        "rotY": 179.997543,
+        "rotZ": 0.000326407433,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -26377,11 +26377,11 @@
       "GUID": "c10a9d",
       "Name": "Card",
       "Transform": {
-        "posX": 89.50009,
+        "posX": 89.5001,
         "posY": 1.60346448,
-        "posZ": -2.50005984,
-        "rotX": 0.000846815645,
-        "rotY": 180.0002,
+        "posZ": -2.50006175,
+        "rotX": 0.000846950163,
+        "rotY": 180.000183,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -26435,10 +26435,10 @@
       "Transform": {
         "posX": 74.0,
         "posY": 1.67099011,
-        "posZ": 24.0007343,
-        "rotX": 0.000849603559,
-        "rotY": 180.001831,
-        "rotZ": 7.9775E-08,
+        "posZ": 24.0007553,
+        "rotX": 0.0008494679,
+        "rotY": 180.001892,
+        "rotZ": 4.831723E-08,
         "scaleX": 5.43669558,
         "scaleY": 0.1614779,
         "scaleZ": 1.92262471
@@ -26447,9 +26447,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.06715124,
-        "g": 0.217768937,
-        "b": 0.1391857
+        "r": 0.06715119,
+        "g": 0.217768878,
+        "b": 0.139185637
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -26465,7 +26465,7 @@
       "GridProjection": false,
       "HideWhenFaceDown": false,
       "Hands": false,
-      "LuaScript": "function onload()\r\n     self.createButton({\r\n          click_function = \"passLeftClick\",\r\n          function_owner = self,\r\n          width = 1500,\r\n          height = 900,\r\n          font_size = 300,\r\n          label = \"Pass Left\",\r\n          rotation = {0, 0, 0},\r\n          position = {-0.3, 1, 0},\r\n          scale = {0.1, 0.1, 0.3},\r\n          tooltip = \"Passes cards to the player on your left.\"\r\n     })\r\n\r\n     self.createButton({\r\n          click_function = \"passRightClick\",\r\n          function_owner = self,\r\n          width = 1500,\r\n          height = 900,\r\n          font_size = 300,\r\n          label = \"Pass Right\",\r\n          rotation = {0, 0, 0},\r\n          position = {0.3, 1, 0},\r\n          scale = {0.1, 0.1, 0.3},\r\n          tooltip = \"Passes cards to the player on your right.\"\r\n     })\r\nend\r\n\r\nfunction passLeftClick()\r\n     startLuaCoroutine(self, \"passLeftCo\")\r\nend\r\n\r\nfunction passRightClick()\r\n     startLuaCoroutine(self, \"passRightCo\")\r\nend\r\n\r\nfunction passRightCo()\r\n     local players = Global.call(\"getValidSeatedPlayers\")\r\n     local handObjects = {}\r\n\r\n     for i=1, #players do\r\n          local handObjs = players[i].getHandObjects(1)\r\n          handObjects[players[i].color] = handObjs\r\n     end\r\n\r\n     for i=#players, 1, -1 do\r\n          local next = i - 1\r\n          if next <= 0 then\r\n               next = #players\r\n          end\r\n\r\n          for _, obj in pairs(handObjects[players[i].color]) do\r\n               --obj.deal(1, players[next].color)\r\n               local trans = players[next].getHandTransform()\r\n               obj.setPosition(trans.position)\r\n               obj.setRotation({\r\n                    trans.rotation[1],\r\n                    trans.rotation[2] + 180,\r\n                    trans.rotation[3]\r\n               })\r\n          end\r\n          --wait(0.05)\r\n     end\r\n\r\n     Global.call(\"resetPlayerReadyStatus\")\r\n     return 1\r\nend\r\n\r\nfunction passLeftCo()\r\n     local players = Global.call(\"getValidSeatedPlayers\")\r\n     local handObjects = {}\r\n\r\n     for i=1, #players do\r\n          local handObjs = players[i].getHandObjects(1)\r\n          handObjects[players[i].color] = handObjs\r\n     end\r\n\r\n     for i=1, #players do\r\n          local next = i + 1\r\n          if next > #players then\r\n               next = 1\r\n          end\r\n\r\n          for _, obj in pairs(handObjects[players[i].color]) do\r\n               --obj.deal(1, players[next].color)\r\n               local trans = players[next].getHandTransform()\r\n               obj.setPosition(trans.position)\r\n               obj.setRotation({\r\n                    trans.rotation[1],\r\n                    trans.rotation[2] + 180,\r\n                    trans.rotation[3]\r\n               })\r\n          end\r\n          --wait(0.05)\r\n     end\r\n\r\n     Global.call(\"resetPlayerReadyStatus\")\r\n     return 1\r\nend\r\n\r\nfunction wait(time)\r\n    local start = os.time()\r\n    repeat\r\n        coroutine.yield(0)\r\n    until os.time() > start + time\r\nend",
+      "LuaScript": "function onload()\r\n     self.createButton({\r\n          click_function = \"passLeftClick\",\r\n          function_owner = self,\r\n          width = 1500,\r\n          height = 900,\r\n          font_size = 300,\r\n          label = \"Pass Left\",\r\n          rotation = {0, 0, 0},\r\n          position = {-0.3, 1, 0},\r\n          scale = {0.1, 0.1, 0.3},\r\n          tooltip = \"Passes cards to the player on your left.\"\r\n     })\r\n\r\n     self.createButton({\r\n          click_function = \"passRightClick\",\r\n          function_owner = self,\r\n          width = 1500,\r\n          height = 900,\r\n          font_size = 300,\r\n          label = \"Pass Right\",\r\n          rotation = {0, 0, 0},\r\n          position = {0.3, 1, 0},\r\n          scale = {0.1, 0.1, 0.3},\r\n          tooltip = \"Passes cards to the player on your right.\"\r\n     })\r\nend\r\n\r\nfunction passLeftClick()\r\n     startLuaCoroutine(self, \"passLeftCo\")\r\nend\r\n\r\nfunction passRightClick()\r\n     startLuaCoroutine(self, \"passRightCo\")\r\nend\r\n\r\nfunction passRightCo()\r\n     local players = Global.call(\"getValidSeatedPlayers\")\r\n     local handObjects = {}\r\n\r\n     for i=1, #players do\r\n          local handObjs = players[i].getHandObjects(1)\r\n          handObjects[players[i].color] = handObjs\r\n     end\r\n\r\n     for i=#players, 1, -1 do\r\n          local next = i - 1\r\n          if next <= 0 then\r\n               next = #players\r\n          end\r\n\r\n          for _, obj in pairs(handObjects[players[i].color]) do\r\n               --obj.deal(1, players[next].color)\r\n               local trans = players[next].getHandTransform()\r\n               obj.setPosition(trans.position)\r\n               obj.setRotation({\r\n                    trans.rotation[1],\r\n                    trans.rotation[2] + 180,\r\n                    trans.rotation[3]\r\n               })\r\n          end\r\n          --wait(0.05)\r\n     end\r\n\r\n     broadcastToAll(\"Cards have been passed to the right.\", \"White\");\r\n     Global.call(\"resetPlayerReadyStatus\")\r\n     return 1\r\nend\r\n\r\nfunction passLeftCo()\r\n     local players = Global.call(\"getValidSeatedPlayers\")\r\n     local handObjects = {}\r\n\r\n     for i=1, #players do\r\n          local handObjs = players[i].getHandObjects(1)\r\n          handObjects[players[i].color] = handObjs\r\n     end\r\n\r\n     for i=1, #players do\r\n          local next = i + 1\r\n          if next > #players then\r\n               next = 1\r\n          end\r\n\r\n          for _, obj in pairs(handObjects[players[i].color]) do\r\n               --obj.deal(1, players[next].color)\r\n               local trans = players[next].getHandTransform()\r\n               obj.setPosition(trans.position)\r\n               obj.setRotation({\r\n                    trans.rotation[1],\r\n                    trans.rotation[2] + 180,\r\n                    trans.rotation[3]\r\n               })\r\n          end\r\n          --wait(0.05)\r\n     end\r\n\r\n     broadcastToAll(\"Cards have been passed to the left.\", \"White\");\r\n     Global.call(\"resetPlayerReadyStatus\")\r\n     return 1\r\nend\r\n\r\nfunction wait(time)\r\n    local start = os.time()\r\n    repeat\r\n        coroutine.yield(0)\r\n    until os.time() > start + time\r\nend",
       "LuaScriptState": ""
     }
   ]
