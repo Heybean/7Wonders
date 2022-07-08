@@ -1,7 +1,7 @@
 {
   "SaveName": "7 Wonders (Second Edition)",
-  "EpochTime": 1657238821,
-  "Date": "7/7/2022 5:07:01 PM",
+  "EpochTime": 1657243544,
+  "Date": "7/7/2022 6:25:44 PM",
   "VersionNumber": "v13.1.1",
   "GameMode": "7 Wonders (2nd Ed)",
   "GameType": "Game",
@@ -316,7 +316,21 @@
   "DecalPallet": [],
   "LuaScript": "ValidColors = {\n     Blue=7,\n     Orange=6,\n     Green=5,\n     Yellow=4,\n     Red=3,\n     Purple=2,\n     White=1\n}\n\nTurnOrder = {\"White\", \"Purple\", \"Red\", \"Yellow\", \"Green\", \"Orange\", \"Blue\"}\n\nfunction onLoad()\n     ScoreSheet = getObjectFromGUID(\"1b8ed7\")\n\n     -- bd = getObjectFromGUID(\"5a03fe\")\n     -- sp = bd.getSnapPoints()\n     -- for _, o in pairs(getObjectsWithTag(\"Shipyard\")) do\n     --      o.setSnapPoints(sp)\n     -- end\nend\n\n--[[ The onUpdate event is called once per frame. --]]\nfunction onUpdate()\n    --[[ print('onUpdate loop!') --]]\nend\n\nfunction registerSingleObject(player, tag)\n     for _, obj in pairs(getObjectsWithTag(tag)) do\n          local owner = obj.getVar(\"owner\")\n          if owner == player then\n               obj.setVar(\"owner\", nil)\n               obj.highlightOff()\n               break\n          end\n     end\nend\n\nfunction onObjectDrop(player, object)\n     if object.hasTag(\"Score\") then\n\n          if #object.getZones() > 0 then return end\n\n          -- register only one wonder per player\n          if object.hasTag(\"Wonder\") then\n               registerSingleObject(player, \"Wonder\")\n          elseif object.hasTag(\"Shipyard\") then\n               registerSingleObject(player, \"Shipyard\")\n          end\n\n          object.setVar(\"owner\", player)\n          if ScoreSheet.getVar(\"ShowHighlight\") then\n               object.highlightOn(player)\n          end\n     end\nend\n\nfunction onObjectEnterZone(zone, object)\n     if object.hasTag(\"Score\") and object.getVar(\"owner\") then\n          object.setVar(\"owner\", nil)\n          object.highlightOff()\n\n          if object.type == 'Card' then\n               object.clearButtons()\n          end\n     end\nend\n\nfunction getValidSeatedPlayers()\n     SeatedPlayerCount = 0\n     SeatedPlayers = {}\n\n     if Turns.type == 1 then\n          Turns.type = 2\n          Turns.order = TurnOrder\n     end\n\n     for i=1, #TurnOrder do\n          if Player[TurnOrder[i]].seated then\n               SeatedPlayerCount = SeatedPlayerCount + 1\n               SeatedPlayers[#SeatedPlayers + 1] = Player[TurnOrder[i]]\n          end\n     end\n     return SeatedPlayers\nend",
   "LuaScriptState": "",
-  "XmlUI": "<!-- Xml UI. See documentation: https://api.tabletopsimulator.com/ui/introUI/ -->",
+  "XmlUI": "<!-- Xml UI. See documentation: https://api.tabletopsimulator.com/ui/introUI/ -->\r\n<Image image=\"compass\" active=\"false\"/>",
+  "CustomUIAssets": [
+    {
+      "Name": "compass",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1861692057092330758/EEF7F8FC2362304F68838B29D588E7FB19CC47DE/"
+    },
+    {
+      "Name": "gear",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1861692057092330812/4E285E2B948B6A451EDB526076E0F53FEE3A7D8E/"
+    },
+    {
+      "Name": "tablet",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1861692057092330852/D848FC0ABF8B06D806CC4EA0DDC415A54DC38708/"
+    }
+  ],
   "ObjectStates": [
     {
       "GUID": "088bd4",
@@ -588,9 +602,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.304806352,
-        "g": 0.149609089,
-        "b": 0.0461583436
+        "r": 0.304806143,
+        "g": 0.14960891,
+        "b": 0.04615821
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -665,12 +679,12 @@
       "GUID": "3f95a5",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 61.4995155,
+        "posX": 61.4995041,
         "posY": 1.57322907,
-        "posZ": 22.5000782,
-        "rotX": -0.0008480396,
-        "rotY": 359.9898,
-        "rotZ": -5.087917E-07,
+        "posZ": 22.5000954,
+        "rotX": -0.000847614254,
+        "rotY": 359.989929,
+        "rotZ": 4.7743066E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -767,10 +781,10 @@
       "Transform": {
         "posX": 64.5,
         "posY": 1.57322907,
-        "posZ": 22.50041,
-        "rotX": -0.0008315196,
-        "rotY": -0.00285668764,
-        "rotZ": -1.03111752E-05,
+        "posZ": 22.5004253,
+        "rotX": -0.0008581664,
+        "rotY": -0.00324785151,
+        "rotZ": 2.15332534E-06,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -781,7 +795,7 @@
       "ColorDiffuse": {
         "r": 0.60452956,
         "g": 0.5999471,
-        "b": 0.17377314
+        "b": 0.17377305
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -867,10 +881,10 @@
       "Transform": {
         "posX": 67.5,
         "posY": 1.57322907,
-        "posZ": 22.5004654,
-        "rotX": -0.000847804651,
-        "rotY": 0.00157871109,
-        "rotZ": -3.360955E-07,
+        "posZ": 22.5004864,
+        "rotX": -0.000847563148,
+        "rotY": 0.00161835121,
+        "rotZ": -6.473171E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -880,8 +894,8 @@
       "GMNotes": "",
       "ColorDiffuse": {
         "r": 0.52439,
-        "g": 0.3111596,
-        "b": 0.169008017
+        "g": 0.311159521,
+        "b": 0.169007927
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -965,12 +979,12 @@
       "GUID": "b1f5a1",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 61.4996262,
+        "posX": 61.49961,
         "posY": 1.57287431,
-        "posZ": -1.50010478,
-        "rotX": -0.000847442832,
-        "rotY": 3.15445577E-05,
-        "rotZ": -7.28899067E-07,
+        "posZ": -1.50010526,
+        "rotX": -0.0008481869,
+        "rotY": 0.000213283041,
+        "rotZ": 7.15483054E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -1065,12 +1079,12 @@
       "GUID": "5b9a9c",
       "Name": "Bag",
       "Transform": {
-        "posX": 63.0003662,
-        "posY": 1.40465546,
-        "posZ": -14.0005026,
-        "rotX": -0.00085455447,
-        "rotY": 0.00662158756,
-        "rotZ": -2.00747054E-05,
+        "posX": 63.00035,
+        "posY": 1.404655,
+        "posZ": -14.0005131,
+        "rotX": -0.0008491585,
+        "rotY": 0.00645945128,
+        "rotZ": -1.989477E-05,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -1079,7 +1093,7 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.11372263,
+        "r": 0.113722526,
         "g": 0.5453312,
         "b": 1.0
       },
@@ -3872,10 +3886,10 @@
       "Transform": {
         "posX": 65.99995,
         "posY": 1.57264519,
-        "posZ": -17.0003719,
-        "rotX": -0.0008476355,
-        "rotY": -0.00182424684,
-        "rotZ": 5.22870849E-08,
+        "posZ": -17.0003853,
+        "rotX": -0.0008480854,
+        "rotY": -0.001833294,
+        "rotZ": 1.17132885E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -3884,9 +3898,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.19199729,
+        "r": 0.1919972,
         "g": 0.701,
-        "b": 0.167997271
+        "b": 0.167997181
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -3966,10 +3980,10 @@
       "Transform": {
         "posX": 64.0,
         "posY": 1.57264519,
-        "posZ": -17.0003567,
-        "rotX": -0.0008479319,
-        "rotY": 0.000155776419,
-        "rotZ": -2.800983E-08,
+        "posZ": -17.00037,
+        "rotX": -0.00083517615,
+        "rotY": 0.000209852675,
+        "rotZ": 6.204732E-09,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -4061,12 +4075,12 @@
       "GUID": "10eb0f",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 61.9998665,
+        "posX": 61.9998627,
         "posY": 1.57264519,
-        "posZ": -17.0003853,
-        "rotX": -0.0008512852,
-        "rotY": -0.00359414984,
-        "rotZ": 3.82898E-06,
+        "posZ": -17.0004,
+        "rotX": -0.000836032268,
+        "rotY": -0.00385638187,
+        "rotZ": -1.13819733E-05,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -4077,7 +4091,7 @@
       "ColorDiffuse": {
         "r": 0.905,
         "g": 0.898,
-        "b": 0.171997279
+        "b": 0.17199719
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4155,12 +4169,12 @@
       "GUID": "0eef1f",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 59.99925,
+        "posX": 59.99923,
         "posY": 1.57264519,
-        "posZ": -16.9998951,
-        "rotX": -0.0008705097,
-        "rotY": 0.00164491159,
-        "rotZ": -1.9703466E-06,
+        "posZ": -16.99991,
+        "rotX": -0.000850937,
+        "rotY": 0.00166128331,
+        "rotZ": 2.52496684E-05,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -4170,8 +4184,8 @@
       "GMNotes": "",
       "ColorDiffuse": {
         "r": 0.856,
-        "g": 0.09999726,
-        "b": 0.09399722
+        "g": 0.0999971554,
+        "b": 0.09399714
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4251,10 +4265,10 @@
       "Transform": {
         "posX": 64.49977,
         "posY": 1.40523934,
-        "posZ": 25.5003052,
-        "rotX": -0.0008472936,
-        "rotY": 359.9871,
-        "rotZ": -4.63261728E-07,
+        "posZ": 25.5003262,
+        "rotX": -0.000857274,
+        "rotY": 359.986847,
+        "rotZ": -1.5007131E-06,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -4689,12 +4703,12 @@
       "GUID": "c56b5a",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 61.499733,
+        "posX": 61.49972,
         "posY": 1.57318473,
-        "posZ": 19.50035,
-        "rotX": -0.0008576375,
-        "rotY": -0.0005435961,
-        "rotZ": -2.147899E-05,
+        "posZ": 19.5003681,
+        "rotX": -0.0008598094,
+        "rotY": -0.00047053388,
+        "rotZ": 7.445882E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -4703,9 +4717,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.0980367,
-        "g": 0.0980367,
-        "b": 0.0980367
+        "r": 0.09803661,
+        "g": 0.09803661,
+        "b": 0.09803661
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4789,12 +4803,12 @@
       "GUID": "5411ef",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 63.4999733,
+        "posX": 63.4999657,
         "posY": 1.57318473,
-        "posZ": 19.5003529,
-        "rotX": -0.000853696,
-        "rotY": 359.992126,
-        "rotZ": -1.49588041E-05,
+        "posZ": 19.5003662,
+        "rotX": -0.0008576263,
+        "rotY": 359.991974,
+        "rotZ": -1.04224182E-06,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -4803,9 +4817,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.0980367,
-        "g": 0.0980367,
-        "b": 0.0980367
+        "r": 0.09803661,
+        "g": 0.09803661,
+        "b": 0.09803661
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4891,10 +4905,10 @@
       "Transform": {
         "posX": 65.5,
         "posY": 1.57318473,
-        "posZ": 19.5003777,
-        "rotX": -0.0008483562,
-        "rotY": 0.0009188001,
-        "rotZ": -1.87451363E-07,
+        "posZ": 19.500391,
+        "rotX": -0.0008472581,
+        "rotY": 0.000928402646,
+        "rotZ": -8.42982961E-10,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -4903,9 +4917,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.0980367,
-        "g": 0.0980367,
-        "b": 0.0980367
+        "r": 0.09803661,
+        "g": 0.09803661,
+        "b": 0.09803661
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -4991,10 +5005,10 @@
       "Transform": {
         "posX": 67.5,
         "posY": 1.57318473,
-        "posZ": 19.5003529,
-        "rotX": -0.000848594646,
-        "rotY": 0.0003549057,
-        "rotZ": -3.57474136E-07,
+        "posZ": 19.5003662,
+        "rotX": -0.0008470325,
+        "rotY": 0.00030982637,
+        "rotZ": -4.40055857E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -5003,9 +5017,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.0980367,
-        "g": 0.0980367,
-        "b": 0.0980367
+        "r": 0.09803661,
+        "g": 0.09803661,
+        "b": 0.09803661
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -5089,12 +5103,12 @@
       "GUID": "4cb023",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 60.9997177,
+        "posX": 60.9997063,
         "posY": 1.5725565,
-        "posZ": -23.0003986,
-        "rotX": -0.00084742636,
-        "rotY": 0.0004270391,
-        "rotZ": 5.86187E-07,
+        "posZ": -23.0004177,
+        "rotX": -0.000848026946,
+        "rotY": 0.000481056224,
+        "rotZ": -1.1476784E-06,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -5189,12 +5203,12 @@
       "GUID": "9ca312",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 62.99973,
+        "posX": 62.9997177,
         "posY": 1.5725565,
-        "posZ": -23.000412,
-        "rotX": -0.000838331471,
-        "rotY": 0.0034240922,
-        "rotZ": 1.49998114E-05,
+        "posZ": -23.0004311,
+        "rotX": -0.0008474724,
+        "rotY": 0.00362655777,
+        "rotZ": -1.13499254E-06,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -5291,10 +5305,10 @@
       "Transform": {
         "posX": 65.0,
         "posY": 1.5725565,
-        "posZ": -23.0004463,
-        "rotX": -0.000825743366,
-        "rotY": -0.00113692752,
-        "rotZ": 1.11084489E-07,
+        "posZ": -23.00047,
+        "rotX": -0.000856783,
+        "rotY": -0.00100721233,
+        "rotZ": 1.47089963E-06,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -5389,12 +5403,12 @@
       "GUID": "a30549",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 59.9997177,
+        "posX": 59.9997063,
         "posY": 1.57260084,
-        "posZ": -20.0003834,
-        "rotX": -0.00084755756,
-        "rotY": -0.00100342021,
-        "rotZ": 1.06339473E-06,
+        "posZ": -20.0003986,
+        "rotX": -0.000848262745,
+        "rotY": -0.0009409734,
+        "rotZ": -9.112172E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -5489,12 +5503,12 @@
       "GUID": "1a1373",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 61.9998665,
+        "posX": 61.999855,
         "posY": 1.57260084,
-        "posZ": -20.00041,
-        "rotX": -0.000869133743,
-        "rotY": -0.00414561341,
-        "rotZ": -4.38187556E-07,
+        "posZ": -20.0004272,
+        "rotX": -0.0008471486,
+        "rotY": -0.00416425662,
+        "rotZ": -3.45589257E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -5589,12 +5603,12 @@
       "GUID": "8dcae9",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 63.99991,
+        "posX": 63.9999046,
         "posY": 1.57260084,
-        "posZ": -20.0003986,
-        "rotX": -0.0008710913,
-        "rotY": 0.00195104,
-        "rotZ": -2.21125447E-06,
+        "posZ": -20.0004158,
+        "rotX": -0.000847695337,
+        "rotY": 0.001989796,
+        "rotZ": -5.17694843E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -5691,10 +5705,10 @@
       "Transform": {
         "posX": 66.0000153,
         "posY": 1.57260084,
-        "posZ": -20.0003872,
-        "rotX": -0.000847075949,
-        "rotY": 0.00150064914,
-        "rotZ": -7.246857E-07,
+        "posZ": -20.0004025,
+        "rotX": -0.0008691129,
+        "rotY": 0.00162742811,
+        "rotZ": -4.46563575E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -5791,10 +5805,10 @@
       "Transform": {
         "posX": 64.49961,
         "posY": 1.57287431,
-        "posZ": -1.50057244,
-        "rotX": -0.000848428754,
+        "posZ": -1.50057364,
+        "rotX": -0.000847294636,
         "rotY": 359.981964,
-        "rotZ": -1.94692973E-07,
+        "rotZ": 1.897388E-07,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -5891,10 +5905,10 @@
       "Transform": {
         "posX": 76.545845,
         "posY": 1.58971131,
-        "posZ": -12.5418549,
-        "rotX": 0.000846934447,
-        "rotY": 180.004944,
-        "rotZ": 9.41047347E-08,
+        "posZ": -12.5418653,
+        "rotX": 0.000846839335,
+        "rotY": 180.005,
+        "rotZ": 2.35036765E-07,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -5937,10 +5951,10 @@
       "Transform": {
         "posX": 71.54585,
         "posY": 1.58971131,
-        "posZ": -12.5419073,
-        "rotX": 0.0008467987,
-        "rotY": 180.002762,
-        "rotZ": -4.82868E-08,
+        "posZ": -12.5419168,
+        "rotX": 0.0008467913,
+        "rotY": 180.002838,
+        "rotZ": -1.32439413E-06,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -5983,10 +5997,10 @@
       "Transform": {
         "posX": 76.49999,
         "posY": 1.58985972,
-        "posZ": -2.50003982,
-        "rotX": 0.000846774958,
-        "rotY": 180.013138,
-        "rotZ": 2.15653543E-07,
+        "posZ": -2.500042,
+        "rotX": 0.0008466926,
+        "rotY": 180.013245,
+        "rotZ": 1.60467309E-07,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -6029,10 +6043,10 @@
       "Transform": {
         "posX": 71.5,
         "posY": 1.58985972,
-        "posZ": -2.500064,
-        "rotX": 0.000846747949,
-        "rotY": 180.00589,
-        "rotZ": -7.17175652E-08,
+        "posZ": -2.500066,
+        "rotX": 0.000846880954,
+        "rotY": 180.005768,
+        "rotZ": -7.079641E-08,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -6074,11 +6088,11 @@
       "Name": "Custom_PDF",
       "Transform": {
         "posX": 76.5,
-        "posY": 1.58999288,
-        "posZ": 6.500085,
-        "rotX": 0.000846833747,
-        "rotY": 180.013565,
-        "rotZ": 1.9232435E-07,
+        "posY": 1.58999276,
+        "posZ": 6.50008774,
+        "rotX": 0.0008468376,
+        "rotY": 180.013535,
+        "rotZ": 3.252735E-07,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -6121,10 +6135,10 @@
       "Transform": {
         "posX": 71.5,
         "posY": 1.58999276,
-        "posZ": 6.50009775,
-        "rotX": 0.0008468531,
-        "rotY": 180.022629,
-        "rotZ": 3.24963139E-07,
+        "posZ": 6.500102,
+        "rotX": 0.00084680767,
+        "rotY": 180.022736,
+        "rotZ": 4.627648E-07,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -6166,11 +6180,11 @@
       "Name": "Custom_PDF",
       "Transform": {
         "posX": 75.0,
-        "posY": 1.5903697,
-        "posZ": 32.0005646,
-        "rotX": 0.0008468556,
-        "rotY": 179.983139,
-        "rotZ": -2.04797573E-07,
+        "posY": 1.59036994,
+        "posZ": 32.0006065,
+        "rotX": 0.0008465336,
+        "rotY": 179.9833,
+        "rotZ": -4.005252E-06,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -6200,7 +6214,7 @@
       "CustomPDF": {
         "PDFUrl": "http://cloud-3.steamusercontent.com/ugc/1636486603311314487/CF27C4596802A23ABF201229BBAA10620F280069/",
         "PDFPassword": "",
-        "PDFPage": 0,
+        "PDFPage": 1,
         "PDFPageOffset": 0
       },
       "LuaScript": "",
@@ -6213,10 +6227,10 @@
       "Transform": {
         "posX": 68.0,
         "posY": 1.59036958,
-        "posZ": 32.000618,
-        "rotX": 0.00084679795,
-        "rotY": 180.02739,
-        "rotZ": 1.8368047E-07,
+        "posZ": 32.00064,
+        "rotX": 0.000846720068,
+        "rotY": 180.02742,
+        "rotZ": 7.054358E-07,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -6257,12 +6271,12 @@
       "GUID": "3bfbc0",
       "Name": "Custom_PDF",
       "Transform": {
-        "posX": 60.9997864,
+        "posX": 60.9997749,
         "posY": 1.59037018,
-        "posZ": 32.03671,
-        "rotX": 0.000846887648,
-        "rotY": 179.997726,
-        "rotZ": -3.50881031E-08,
+        "posZ": 32.03673,
+        "rotX": 0.00084675377,
+        "rotY": 179.99762,
+        "rotZ": -8.575442E-08,
         "scaleX": 2.17822933,
         "scaleY": 1.0,
         "scaleZ": 2.17822933
@@ -6303,11 +6317,11 @@
       "GUID": "4b61c7",
       "Name": "Card",
       "Transform": {
-        "posX": 89.50005,
+        "posX": 89.50007,
         "posY": 1.60359752,
-        "posZ": 6.50009775,
-        "rotX": 0.000846790441,
-        "rotY": 180.000015,
+        "posZ": 6.50010061,
+        "rotX": 0.000846821,
+        "rotY": 179.999771,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -6358,10 +6372,10 @@
       "Transform": {
         "posX": 75.16332,
         "posY": 1.5894959,
-        "posZ": -27.1145687,
-        "rotX": 0.000846812036,
-        "rotY": 179.984177,
-        "rotZ": -1.943323E-07,
+        "posZ": -27.1146412,
+        "rotX": 0.000846827868,
+        "rotY": 179.9843,
+        "rotZ": -2.08014512E-07,
         "scaleX": 8.537561,
         "scaleY": 1.0,
         "scaleZ": 8.537561
@@ -6400,7 +6414,7 @@
           "Stretch": true
         }
       },
-      "LuaScript": "ShowHighlight = false\r\nAutoScore = true\r\n\r\nIndexOffset_Score = 11\r\nIndexStart_Total = 77\r\nIndexStart_Name = 84\r\n\r\nfunction onload()\r\n     self.createButton({\r\n          click_function = 'toggleHighlightClick',\r\n          function_owner = self,\r\n          label = 'Highlight: Off',\r\n          position = {-.64,0,-1.1},\r\n          width = 2200,\r\n          height = 400,\r\n          font_size = 300,\r\n          scale = {0.1, 0.1, 0.1}\r\n     })\r\n\r\n     self.createButton({\r\n          click_function = 'toggleAutoScoreClick',\r\n          function_owner = self,\r\n          label = 'Auto Score: On',\r\n          position = {-.15,0,-1.1},\r\n          width = 2200,\r\n          height = 400,\r\n          font_size = 300,\r\n          scale = {0.1, 0.1, 0.1}\r\n     })\r\n\r\n     self.createButton({\r\n          click_function = 'updateScoreClick',\r\n          function_owner = self,\r\n          label = 'Refresh',\r\n          position = {.64,0,-1.1},\r\n          width = 2200,\r\n          height = 400,\r\n          font_size = 300,\r\n          scale = {0.1, 0.1, 0.1}\r\n     })\r\n\r\n     local posXStart = -0.54\r\n     local posXOffset = 0.205\r\n\r\n     local posYStart = -0.72\r\n     local posYOffset = 0.133\r\n     for i=1, 7 do\r\n          for j=1, 11 do\r\n               self.createInput({\r\n                    input_function = 'updateSum',\r\n                    function_owner = self,\r\n                    label = '---',\r\n                    alignment = 3,\r\n                    position = {posXStart+(posXOffset*(i-1)),0.15,posYStart+(posYOffset*(j-1))},\r\n                    scale = {0.15,0.15,0.15},\r\n                    width = 600,\r\n                    height = 400,\r\n                    font_size = 300,\r\n                    color = {1,1,1,0},\r\n                    font_color = {0.1, 0.1, 0.1, 100},\r\n                    validation = 3\r\n               })\r\n          end\r\n     end\r\n\r\n     for i=1, 7 do\r\n          self.createInput({\r\n               input_function = 'none',\r\n               function_owner = self,\r\n               label = '----',\r\n               alignment = 3,\r\n               position = {posXStart+(posXOffset*(i-1)),0.15,0.75},\r\n               scale = {0.2,0.2,0.2},\r\n               width = 1200,\r\n               height = 400,\r\n               font_size = 300,\r\n               color = {1,1,1,0},\r\n               font_color = {0.1, 0.1, 0.1, 100},\r\n               value = 0\r\n          })\r\n     end\r\n\r\n     for i=1, 7 do\r\n          self.createInput({\r\n               input_function = 'none',\r\n               function_owner = self,\r\n               label = 'Name',\r\n               alignment = 3,\r\n               position = {posXStart+(posXOffset*(i-1)),0.15,-0.87},\r\n               scale = {0.07,0.07,0.07},\r\n               width = 1200,\r\n               height = 400,\r\n               font_size = 300,\r\n               color = {1,1,1,0},\r\n               font_color = {0.1,0.1,0.1,100},\r\n          })\r\n     end\r\nend\r\n\r\nfunction none()\r\nend\r\n\r\nfunction updateScoreClick()\r\n     startLuaCoroutine(self, 'updateScoreCo')\r\nend\r\n\r\nfunction updateScoreCo()\r\n     local validColors = Global.getVar(\"ValidColors\")\r\n     local playerColors = Global.getVar(\"TurnOrder\")\r\n     local players = Global.call(\"getValidSeatedPlayers\")\r\n     local scoreTally = {}\r\n\r\n     -- init\r\n     for _, color in pairs(playerColors) do\r\n          scoreTally[color] = {\r\n               scoreLater = {},    --cards to score on second pass\r\n               exist = false,\r\n               wonder = 0,\r\n               wonderStagesBuilt = 0,\r\n               wonderComplete = false,\r\n               coins = 0,\r\n               debt = 0,\r\n               conflict1Count = 0,\r\n               conflict2Count = 0,\r\n               conflict3Count = 0,\r\n               conflictVictoryTotal = 0,\r\n               militaryDefeat = 0,\r\n               navalVictoryTotal = 0,\r\n               navalDefeat = 0,\r\n               compass = 0,\r\n               gear = 0,\r\n               tablet = 0,\r\n               Brown = 0,\r\n               Gray = 0,\r\n               Red = 0,\r\n               Yellow = 0,\r\n               Blue = 0,\r\n               Green = 0,\r\n               Black = 0,\r\n               Purple = 0,\r\n               White = 0,\r\n               Blue_vp = 0,\r\n               Yellow_vp = 0,\r\n               Green_vp = 0,\r\n               Purple_vp = 0,\r\n               Black_vp = 0,\r\n               White_vp = 0,\r\n          }\r\n     end\r\n\r\n     local vp = 0\r\n\r\n     -- calculate stats for each player based on owned objects\r\n     for _, obj in pairs(getObjectsWithTag(\"Score\")) do\r\n          local owner = obj.getVar(\"owner\")\r\n          local score = scoreTally[owner]\r\n          if owner then\r\n               score.exist = true\r\n\r\n               if obj.hasTag(\"Coin\") then\r\n                    score.coins = score.coins + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"Debt\") then\r\n                    score.debt = score.debt + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"ConflictVictory\") then\r\n                    vp = tonumber(obj.getDescription())\r\n                    if vp == 1 then\r\n                         score.conflict1Count = score.conflict1Count + 1\r\n                    elseif vp == 3 then\r\n                         score.conflict2Count = score.conflict2Count + 1\r\n                    elseif vp == 5 then\r\n                         score.conflict3Count = score.conflict3Count + 1\r\n                    end\r\n                    score.conflictVictoryTotal = score.conflictVictoryTotal + vp\r\n               elseif obj.hasTag(\"MilitaryDefeat\") then\r\n                    score.militaryDefeat = score.militaryDefeat + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"NavalVictory\") then\r\n                    score.navalVictoryTotal = score.navalVictoryTotal + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"NavalDefeat\") then\r\n                    score.navalDefeat = score.navalDefeat + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"Wonder\") then\r\n                    vp, score.wonderStagesBuilt, score.wonderComplete = scoreWonder(obj)\r\n                    score.wonder = score.wonder + vp\r\n               elseif obj.type == 'Card' and not obj.is_face_down then\r\n                    local cardData = card_db[obj.getName()]\r\n\r\n                    if not cardData then\r\n                         print(obj.getName() .. \" not found in card db.\")\r\n                         goto skip\r\n                    else\r\n                         score[cardData.type] = score[cardData.type] + 1\r\n                         \r\n                         if cardData.vp then\r\n                              local tag = cardData.type .. \"_vp\"\r\n                              score[tag] = score[tag] + cardData.vp\r\n                         end\r\n\r\n                         if cardData.vpFlag then\r\n                              score.scoreLater[#score.scoreLater + 1] = obj\r\n                         end\r\n\r\n                         if cardData.science then\r\n                              local symbol = cardData.science\r\n                              if symbol == \"select\" then  \r\n                                   local selectedSymbol = obj.getVar(\"SelectedScience\")\r\n                                   if selectedSymbol ~= \"\" then\r\n                                        symbol = selectedSymbol\r\n                                   else\r\n                                        goto skip\r\n                                   end\r\n                              elseif symbol == \"most\" then\r\n                                   score.scoreLater[#score.scoreLater + 1] = obj\r\n                                   goto skip\r\n                              end\r\n\r\n                              score[symbol] = score[symbol] + 1\r\n                         end\r\n                    end\r\n               end\r\n\r\n               if obj.hasTag(\"ScienceSelect\") then\r\n                    local selectedSymbol = obj.getVar(\"SelectedScience\")\r\n                    if selectedSymbol ~= \"\" then\r\n                         score[selectedSymbol] = score[selectedSymbol] + 1\r\n                    else\r\n                         goto skip\r\n                    end\r\n               end\r\n          end\r\n\r\n          ::skip::\r\n     end\r\n\r\n     -- second pass scoring\r\n     for _, color in pairs(playerColors) do\r\n          local score = scoreTally[color]\r\n          local neighbors = {getLeftNeighbor(color, scoreTally), getRightNeighbor(color, scoreTally)}\r\n\r\n          for _, card in pairs(score.scoreLater) do\r\n               local cardData = card_db[card.getName()]\r\n               local tag = cardData.type .. \"_vp\"\r\n               local flag = cardData.vpFlag\r\n               local vp = 0\r\n\r\n               if flag == \"COUNT_OWN\" then\r\n                    if not score[cardData.target] then print(cardData.target .. \" target not found.\") end\r\n                    vp = score[cardData.target] * cardData.vpPer\r\n               elseif flag == \"COIN_OWN\" then\r\n                    vp = math.floor(score.coins / 3)\r\n               elseif flag == \"WONDER_COMPLETE\" and score.wonderComplete then\r\n                    vp = 7\r\n               elseif flag == \"BROWN_GRAY_PURPLE_OWN\" then\r\n                    vp = score.Brown + score.Gray + score.Purple\r\n               elseif flag == \"NEIGHBORS\" then\r\n                    for i=1, #neighbors do\r\n                         vp = vp + scoreTally[neighbors[i]][cardData.target] * cardData.vpPer\r\n                    end\r\n               elseif flag == \"MOST\" then\r\n                    local most = true\r\n                    for i=1, #neighbors do\r\n                         if score[cardData.target] <= scoreTally[neighbors[i]][cardData.target] then\r\n                              most = false\r\n                              break\r\n                         end\r\n                    end\r\n\r\n                    if most then\r\n                         vp = cardData.vpPer\r\n                    end\r\n               elseif flag == \"COIN_NEIGHBORS\" then\r\n                    local coinTotal = 0\r\n                    for i=1, #neighbors do\r\n                         coinTotal = coinTotal + scoreTally[neighbors[i]].coin\r\n                    end\r\n                    vp = math.min(10, math.floor(coinTotal / 3))\r\n               elseif flag == \"WONDER_NEIGHBORS\" then\r\n                    for i=1, #neighbors do\r\n                         vp = vp + scoreTally[neighbors[i]].wonderStagesBuilt\r\n                    end\r\n                    vp = vp + score.wonderStagesBuilt\r\n               elseif flag == \"SCIENCE_SET\" then\r\n                    vp = math.min(score.compass, math.min(score.tablet, score.gear)) * cardData.vpPer\r\n               elseif flag == \"COLOR_SET\" then\r\n                    local colors = {\"Blue\", \"Red\", \"Brown\", \"Gray\", \"Yellow\", \"Green\", \"Purple\"}\r\n                    local lowestN = 100\r\n                    for i=1, #colors do\r\n                         lowestN = math.min(score[colors[i]], lowestN)\r\n                    end\r\n                    vp = lowestN * cardData.vpPer\r\n               elseif flag == \"VP_PER_MILITARY1\" then\r\n                    vp = score.conflict1Count * 2\r\n               elseif flag == \"VP_PER_MILITARY3\" then\r\n                    vp = score.conflict2Count * 3\r\n               elseif flag == \"VP_PER_MILITARY5\" then\r\n                    vp = score.conflict3Count * 4\r\n               elseif flag == \"VP_PER_MIL_VICTORY\" then\r\n                    vp = score.conflict1Count + score.conflict2Count + score.conflict3Count\r\n               elseif flag == \"BLUE_RED_GREEN_SET\" then\r\n                    vp = math.min(score.Blue, math.min(score.Red, score.Green)) * cardData.vpPer\r\n               elseif flag == \"ONLY_LEADER\" then\r\n                    if score.White == 1 then\r\n                         vp = cardData.vpPer\r\n                    end\r\n               elseif flag == \"NO_MILITARY_DEFEAT\" then\r\n                    if score.militaryDefeat == 0 then\r\n                         vp = cardData.vpPer\r\n                    end\r\n               elseif flag == \"MILITARY_PAIR\" then\r\n                    vp = math.floor(score.conflict1Count / 2) * 1\r\n                    vp = vp + math.floor(score.conflict2Count / 2) * 3\r\n                    vp = vp + math.floor(score.conflict3Count / 2) * 5\r\n               end\r\n\r\n               if cardData.science == \"most\" then\r\n                    local symbols = {\"compass\", \"tablet\", \"gear\"}\r\n                    local mostCount = -1\r\n                    local mostSymbol = \"\"\r\n                    for i=1, #symbols do\r\n                         if score[symbols[i]] > mostCount then\r\n                              mostCount = score[symbols[i]]\r\n                              mostSymbol = symbols[i]\r\n                         end\r\n                    end\r\n\r\n                    score[mostSymbol] = score[mostSymbol] + 1\r\n\r\n                    goto skip\r\n               end\r\n\r\n               card.clearButtons()\r\n               card.createButton({\r\n                    click_function = \"none\",\r\n                    function_owner = self,\r\n                    width = 0,\r\n                    height = 0,\r\n                    label = vp .. \" VP\",\r\n                    font_size = 80,\r\n                    position = {-.85, 0.3, -1.2},\r\n                    font_color = cardData.type == \"White\" and \"Black\" or \"White\"\r\n               })\r\n\r\n               score[tag] = score[tag] + vp\r\n\r\n               ::skip::\r\n          end\r\n     end\r\n\r\n     for _, color in pairs(playerColors) do\r\n          local i = validColors[color]\r\n          local score = scoreTally[color]\r\n          local scoreIndexStart = (i-1) * IndexOffset_Score\r\n\r\n          if score.exist then\r\n               -- update name\r\n               self.editInput({\r\n                    index = IndexStart_Name + i - 1,\r\n                    value = Player[color].steam_name or color\r\n               })\r\n\r\n               -- update wonder vp\r\n               self.editInput({\r\n                    index = scoreIndexStart,\r\n                    value = score.wonder,\r\n               })\r\n\r\n               -- update coin + debt\r\n               self.editInput({\r\n                    index = scoreIndexStart + 1,\r\n                    value = math.floor(score.coins / 3) + score.debt,\r\n               })\r\n\r\n               -- military vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 2,\r\n                    value = score.conflictVictoryTotal + score.militaryDefeat\r\n               })\r\n\r\n               -- blue vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 3,\r\n                    value = score.Blue_vp\r\n               })\r\n\r\n               -- yellow vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 4,\r\n                    value = score.Yellow_vp\r\n               })\r\n\r\n               -- science vp\r\n               local sets = math.min(score.compass, math.min(score.tablet, score.gear))\r\n               self.editInput({\r\n                    index = scoreIndexStart + 5,\r\n                    value = sets * 7 + math.pow(score.compass, 2) + math.pow(score.tablet, 2) + math.pow(score.gear, 2)\r\n               })\r\n\r\n               -- purple vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 6,\r\n                    value = score.Purple_vp\r\n               })\r\n\r\n               -- black vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 7,\r\n                    value = score.Black_vp\r\n               })\r\n\r\n               -- leader vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 8,\r\n                    value = score.White_vp\r\n               })\r\n\r\n               -- naval vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 9,\r\n                    value = score.navalVictoryTotal + score.navalDefeat\r\n               })\r\n\r\n               updateSum(self, color, nil, false)\r\n          end\r\n     end\r\n\r\n     return 1\r\nend\r\n\r\nfunction updateSum(obj, player_clicker_color, input_value, selected)\r\n     local sumIndex = 76\r\n\r\n     local inputs = obj.getInputs()\r\n\r\n     if selected == false then\r\n          for i=1, 7 do\r\n               local startIndex = (i - 1) * 11\r\n               local score = 0\r\n               for j=1, 11 do\r\n                    if inputs[startIndex + j].value ~= '' and inputs[startIndex + j].value ~= '-' then\r\n                         score = score + tonumber(inputs[startIndex + j].value)\r\n                    end\r\n               end\r\n\r\n               obj.editInput({\r\n                    index = sumIndex + i,\r\n                    value = score\r\n               })\r\n          end\r\n     end\r\nend\r\n\r\nfunction toggleHighlightClick()\r\n     ShowHighlight = not ShowHighlight\r\n     self.editButton({\r\n          index = 0,\r\n          label = \"Highlight: \" .. (ShowHighlight and \"On\" or \"Off\")\r\n     })\r\n\r\n     if ShowHighlight then\r\n          startLuaCoroutine(self, \"highlightOnCo\")\r\n     else\r\n          startLuaCoroutine(self, \"highlightOffCo\")\r\n     end\r\nend\r\n\r\nfunction toggleAutoScoreClick()\r\n     AutoScore = not AutoScore\r\n     self.editButton({\r\n          index = 1,\r\n          label = \"Auto Score: \" .. (AutoScore and \"On\" or \"Off\")\r\n     })\r\nend\r\n\r\nfunction highlightOnCo()\r\n     for _, obj in pairs(getAllObjects()) do\r\n          if obj.hasTag(\"Score\") then\r\n               local player = obj.getVar(\"owner\")\r\n               if player then obj.highlightOn(player) end\r\n          end\r\n     end\r\n     return 1\r\nend\r\n\r\nfunction highlightOffCo()\r\n     for _, obj in pairs(getAllObjects()) do\r\n          obj.highlightOff()\r\n     end\r\n     return 1\r\nend\r\n\r\nfunction wait(time)\r\n     local start = os.time()\r\n     repeat\r\n         coroutine.yield(0)\r\n     until os.time() > start + time\r\n end\r\n\r\nfunction scoreWonder(wonder)\r\n     local info = wonder_db[wonder.getName()]\r\n\r\n     if not info then \r\n          print(wonder.getName() .. \" not found in wonder db.\")\r\n          return 0\r\n     end\r\n\r\n     local vp = 0\r\n     local stagesBuilt = 0\r\n     local vpArr = wonder.is_face_down and info.nightVp or info.dayVp\r\n     local castPoints = {1.3, 0, -1.3}\r\n\r\n     if #vpArr ~= 3 then\r\n          castPoints = wonder.is_face_down and info.nightPos or info.dayPos\r\n     elseif wonder.is_face_down then\r\n          castPoints[1] = -castPoints[1]\r\n          castPoints[3] = -castPoints[3]\r\n     end\r\n\r\n     if not castPoints then\r\n          print(wonder.getName() .. \" missing cast points table.\")\r\n          return 0\r\n     end\r\n\r\n     for i=1, #castPoints do\r\n          local hits = Physics.cast({\r\n               origin = wonder.positionToWorld({castPoints[i], (wonder.is_face_down and -1 or 1), 1.6}),\r\n               direction = {0, -1, 0},\r\n               max_distance = 2,\r\n               --debug = true\r\n          })\r\n\r\n          for _, hit in pairs(hits) do\r\n               if hit.hit_object.type == 'Card' and hit.hit_object.is_face_down then\r\n                    vp = vp + vpArr[i]\r\n                    stagesBuilt = stagesBuilt + 1\r\n                    break\r\n               end\r\n          end\r\n     end\r\n\r\n     return vp, stagesBuilt, stagesBuilt >= #castPoints\r\nend\r\n\r\nfunction getLeftNeighbor(playerColor, scoreTable)\r\n     local validColors = Global.getVar(\"ValidColors\")\r\n     local turnOrder = Global.getVar(\"TurnOrder\")\r\n     local playerIndex = validColors[playerColor]\r\n     for i=1, #turnOrder-1 do\r\n          local ind = playerIndex + i\r\n          if ind > 7 then ind = ind - 7 end\r\n          if scoreTable[turnOrder[ind]].exist then\r\n               return turnOrder[ind]\r\n          end\r\n     end\r\n\r\n     -- no neighbor found\r\n     return playerColor\r\nend\r\n\r\nfunction getRightNeighbor(playerColor, scoreTable)\r\n     local validColors = Global.getVar(\"ValidColors\")\r\n     local turnOrder = Global.getVar(\"TurnOrder\")\r\n     local playerIndex = validColors[playerColor]\r\n     for i=1, #turnOrder-1 do\r\n          local ind = playerIndex - i\r\n          if ind <= 0 then ind = ind + 7 end\r\n          if scoreTable[turnOrder[ind]].exist then\r\n               return turnOrder[ind]\r\n          end\r\n     end\r\n\r\n     -- no neighbor found\r\n     return playerColor\r\nend\r\n\r\nwonder_db = {\r\n     [\"The Temple of Artemis in Éphesos\"] = {dayVp={3,0,7}, nightVp={2,3,5}},\r\n     [\"The Colossus of Rhódos\"] = {dayVp={3,0,7}, nightVp={3,4}, nightPos = {0,-1.3},},\r\n     [\"The Mausoleum of Halikarnassos\"] = {dayVp={3,0,7}, nightVp={2,1,0}},\r\n     [\"The Hanging Gardens of Babylon\"] = {dayVp={3,0,7}, nightVp={0,0}, nightPos = {1.3,0}},\r\n     [\"The Pyramids of Gizah\"] = {dayVp={3,5,7}, nightVp={3,5,5,7}, nightPos = {1.3,0}},\r\n     [\"The Statue of Zeus in Olympia\"] = {dayVp={3,0,7}, nightVp={2,3,5}},\r\n     [\"The Lighthouse of Alexandria\"] = {dayVp={3,0,7}, nightVp={0,0,7}},\r\n     [\"The Al-Khazneh of Petra\"] = {dayVp={3,7,7}, nightVp={3,14}, nightPos = {-0.6, 0.6}},\r\n     [\"Hagia Sophia of Byzantium\"] = {dayVp={3,4,7}, nightVp={4,6}, nightPos = {-0.6, 0.6}},\r\n     [\"The Great Temple of Ramesses II in Abu Simbel\"] = {dayVp={3,5,-1}, nightVp={-1,-1}},\r\n     [\"Colosseum Of Roma\"] = {dayVp={4,6}, nightVp={0,3,3}, dayPos={0.6,-0.6}},\r\n     [\"Siracusa\"] = {dayVp={0,3,0}, nightVp={0,0,0}}\r\n}\r\n \r\ncard_db = {\r\n     -- Age 1 Base\r\n     [\"Lumber Yard\"] = {type = \"Brown\"},\r\n     [\"Stone Pit\"] = {type = \"Brown\"},\r\n     [\"Clay Pool\"] = {type = \"Brown\"},\r\n     [\"Ore Vein\"] = {type = \"Brown\"},\r\n     [\"Timber Yard\"] = {type = \"Brown\"},\r\n     [\"Clay Pit\"] = {type = \"Brown\"},\r\n     [\"Excavation\"] = {type = \"Brown\"},\r\n     [\"Forest Cave\"] = {type = \"Brown\"},\r\n     [\"Tree Farm\"] = {type = \"Brown\"},\r\n     [\"Mine\"] = {type = \"Brown\"},\r\n     [\"Glassworks\"] = {type = \"Gray\"},\r\n     [\"Press\"] = {type = \"Gray\"},\r\n     [\"Loom\"] = {type = \"Gray\"},\r\n     [\"Well\"] = {type = \"Blue\", vp = 3},\r\n     [\"Theater\"] = {type = \"Blue\", vp = 3},\r\n     [\"Baths\"] = {type = \"Blue\", vp = 3},\r\n     [\"Altar\"] = {type = \"Blue\", vp = 3},\r\n     [\"Stockade\"] = {type = \"Red\"},\r\n     [\"Guard Tower\"] = {type = \"Red\"},\r\n     [\"Barracks\"] = {type = \"Red\"},\r\n     [\"West Trading Post\"] = {type = \"Yellow\"},\r\n     [\"East Trading Post\"] = {type = \"Yellow\"},\r\n     [\"Marketplace\"] = {type = \"Yellow\"},\r\n     [\"Tavern\"] = {type = \"Yellow\"},\r\n     [\"Apothecary\"] = {type = \"Green\", science=\"compass\"},\r\n     [\"Scriptorium\"] = {type = \"Green\", science=\"tablet\"},\r\n     [\"Workshop\"] = {type = \"Green\", science=\"gear\"},\r\n\r\n     -- Age 2 Base\r\n     [\"Sawmill\"] = {type = \"Brown\"},\r\n     [\"Quarry\"] = {type = \"Brown\"},\r\n     [\"Brickyard\"] = {type = \"Brown\"},\r\n     [\"Foundry\"] = {type = \"Brown\"},\r\n     [\"Statue\"] = {type = \"Blue\", vp = 4},\r\n     [\"Temple\"] = {type = \"Blue\", vp = 4},\r\n     [\"Courthouse\"] = {type = \"Blue\", vp = 4},\r\n     [\"Aqueduct\"] = {type = \"Blue\", vp = 5},\r\n     [\"Caravansery\"] = {type = \"Yellow\"},\r\n     [\"Forum\"] = {type = \"Yellow\"},\r\n     [\"Vineyard\"] = {type = \"Yellow\"},\r\n     [\"Bazar\"] = {type = \"Yellow\"},\r\n     [\"Stables\"] = {type = \"Red\"},\r\n     [\"Archery Range\"] = {type = \"Red\"},\r\n     [\"Walls\"] = {type = \"Red\"},\r\n     [\"Training Ground\"] = {type = \"Red\"},\r\n     [\"Dispensary\"] = {type = \"Green\", science=\"compass\"},\r\n     [\"Laboratory\"] = {type = \"Green\", science=\"gear\"},\r\n     [\"Library\"] = {type = \"Green\", science=\"tablet\"},\r\n     [\"School\"] = {type = \"Green\", science=\"tablet\"},\r\n\r\n     -- Age 3 Base\r\n     [\"Pantheon\"] = {type = \"Blue\", vp = 7},\r\n     [\"Gardens\"] = {type = \"Blue\", vp = 5},\r\n     [\"Town Hall\"] = {type = \"Blue\", vp = 6},\r\n     [\"Palace\"] = {type = \"Blue\", vp = 8},\r\n     [\"Senate\"] = {type = \"Blue\", vp = 6},\r\n     [\"Lighthouse\"] = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"Yellow\", vpPer=1},\r\n     [\"Haven\"]  = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"Brown\", vpPer=1},\r\n     [\"Chamber of Commerce\"] = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"Gray\", vpPer=2},\r\n     [\"Ludus\"] = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"Red\", vpPer=1},\r\n     [\"Arena\"] = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"wonderStagesBuilt\", vpPer=1},\r\n     [\"Castrum\"] = {type = \"Red\"},\r\n     [\"Fortifications\"] = {type = \"Red\"},\r\n     [\"Circus\"] = {type = \"Red\"},\r\n     [\"Arsenal\"] = {type = \"Red\"},\r\n     [\"Siege Workshop\"] = {type = \"Red\"},\r\n     [\"Lodge\"] = {type = \"Green\", science=\"compass\"},\r\n     [\"Academy\"] = {type = \"Green\", science=\"compass\"},\r\n     [\"Observatory\"] = {type = \"Green\", science=\"gear\"},\r\n     [\"Study\"] = {type = \"Green\", science=\"gear\"},\r\n     [\"University\"] = {type = \"Green\", science=\"tablet\"},\r\n     [\"Workers Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Brown\", vpPer=1},\r\n     [\"Craftsmens Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Gray\", vpPer=2},\r\n     [\"Magistrates Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Blue\", vpPer=1},\r\n     [\"Traders Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Yellow\", vpPer=1},\r\n     [\"Builders Guild\"] = {type=\"Purple\", vpFlag=\"WONDER_STAGE_NEIGHBORS\", vpPer=1},\r\n     [\"Spies Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Red\", vpPer=1},\r\n     [\"Philosophers Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Green\", vpPer=1},\r\n     [\"Decorators Guild\"] = {type=\"Purple\", vpFlag=\"WONDER_COMPLETE\"},\r\n     [\"Scientists Guild\"] = {type=\"Purple\", science=\"select\"},\r\n     [\"Shipowners Guild\"] = {type=\"Purple\", vpFlag=\"BROWN_GRAY_PURPLE_OWN\", vpPer=1},\r\n     [\"Architects Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Purple\", vpPer=3},\r\n     [\"Gamers Guild\"] = {type=\"Purple\", vpFlag=\"COIN_NEIGHBORS\"},\r\n\r\n     -- Age 1 Cities\r\n     [\"Opium Stash\"] = {type=\"Black\"},\r\n     [\"Raider Camp\"] = {type=\"Black\"},\r\n     [\"Hideout\"] = {type=\"Black\"},\r\n     [\"Smuggler's Cache\"] = {type=\"Black\"},\r\n     [\"Residence\"] = {type=\"Black\", vp=1},\r\n     [\"Cells\"] = {type=\"Black\", vpFlag=\"VP_PER_MILITARY1\"},\r\n     [\"City Gates\"] = {type=\"Black\", vp=4},\r\n     [\"West Clandestine Wharf\"] = {type=\"Black\"},\r\n     [\"Customs\"] = {type=\"Black\", vp=4},\r\n     [\"East Clandestine Wharf\"] = {type=\"Black\"},\r\n     [\"Militia\"] = {type=\"Black\"},\r\n     [\"Dive\"] = {type=\"Black\"},\r\n     [\"Pigeonhole\"] = {type=\"Black\", science=\"select\"},\r\n     [\"Secret Warehouse\"] = {type=\"Black\"},\r\n\r\n     -- Age 2 Cities\r\n     [\"Gambling Den\"] = {type=\"Black\"},\r\n     [\"Architect Firm\"] = {type=\"Black\", vp=2},\r\n     [\"Sepulcher\"] = {type=\"Black\", vp=4},\r\n     [\"Trade Center\"] = {type=\"Black\"},\r\n     [\"Opium Den\"] = {type=\"Black\"},\r\n     [\"Raider Fort\"] = {type=\"Black\"},\r\n     [\"Lair\"] = {type=\"Black\", vp=3},\r\n     [\"Band Of Spies\"] = {type=\"Black\", science=\"select\"},\r\n     [\"Black Market\"] = {type=\"Black\"},\r\n     [\"Mercenaries\"] = {type=\"Black\"},\r\n     [\"Guardhouse\"] = {type=\"Black\", vpFlag=\"VP_PER_MILITARY3\"},\r\n     [\"Tabularium\"] = {type=\"Black\", vp=6},\r\n     [\"Forging Agency\"] = {type=\"Black\"},\r\n     [\"Consulate\"] = {type=\"Black\", vp=2},\r\n\r\n     -- Age 3 Cities\r\n     [\"Memorial\"] = {type=\"Black\"},\r\n     [\"Chamber Of Builders\"] = {type=\"Black\", vp=4},\r\n     [\"Cenotaph\"] = {type=\"Black\", vp=5},\r\n     [\"Mint\"] = {type=\"Black\", vp=8},\r\n     [\"Opium Distillery\"] = {type=\"Black\"},\r\n     [\"Raider Garrison\"] = {type=\"Black\"},\r\n     [\"Brotherhood\"] = {type=\"Black\", vp=4},\r\n     [\"Torture Chamber\"] = {type=\"Black\", science=\"select\"},\r\n     [\"Secret Network\"] = {type=\"Black\", vpFlag=\"COUNT_OWN\", target=\"Black\", vpPer=1},\r\n     [\"Contingent\"] = {type=\"Black\"},\r\n     [\"Prison\"] = {type=\"Black\", vpFlag=\"VP_PER_MILITARY5\"},\r\n     [\"Capitol\"] = {type=\"Black\", vp=8},\r\n     [\"Slave Market\"] = {type=\"Black\", vpFlag=\"VP_PER_MIL_VICTORY\"},\r\n     [\"Embassy\"] = {type=\"Black\", vp=3},\r\n     [\"Shadow Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Black\", vpPer=1},\r\n\r\n     -- Leaders\r\n     [\"Cleopatra\"] = {type=\"White\", cost=4, vp=5},\r\n     [\"Hannibal\"] = {type=\"White\", cost=2},\r\n     [\"Caesar\"] = {type=\"White\", cost=5},\r\n     [\"Euclid\"] = {type=\"White\", cost=5, science=\"compass\"},\r\n     [\"Pythagoras\"] = {type=\"White\", cost=5, science=\"gear\"},\r\n     [\"Ptolemy\"] = {type=\"White\", cost=5, science=\"tablet\"},\r\n     [\"Aristotle\"] = {type=\"White\", cost=3, vpFlag=\"SCIENCE_SET\", vpPer=3},\r\n     [\"Midas\"] = {type=\"White\", cost=3, vpFlag=\"COIN_OWN\"},\r\n     [\"Solomon\"] = {type=\"White\", cost=3},\r\n     [\"Croesus\"] = {type=\"White\", cost=1},\r\n     [\"Sappho\"] = {type=\"White\", cost=1, vp=2},\r\n     [\"Zenobia\"] = {type=\"White\", cost=2, vp=3},\r\n     [\"Nefertiti\"] = {type=\"White\", cost=3, vp=4},\r\n     [\"Pericles\"] = {type=\"White\", cost=6, vpFlag=\"COUNT_OWN\", target=\"Red\", vpPer=2},\r\n     [\"Varro\"] = {type=\"White\", cost=3, vpFlag=\"COUNT_OWN\", target=\"Yellow\", vpPer=1},\r\n     [\"Praxiteles\"] = {type=\"White\", cost=3, vpFlag=\"COUNT_OWN\", target=\"Gray\", vpPer=2},\r\n     [\"Nebuchadnezzar\"] = {type=\"White\", cost=4, vpFlag=\"COUNT_OWN\", target=\"Blue\", vpPer=1},\r\n     [\"Hiram\"] = {type=\"White\", cost=3, vpFlag=\"COUNT_OWN\", target=\"Purple\", vpPer=2},\r\n     [\"Justinian\"] = {type=\"White\", cost=3, vpFlag=\"BLUE_RED_GREEN_SET\", vpPer=3},\r\n     [\"Alexander\"] = {type=\"White\", cost=3, vpFlag=\"VP_PER_MIL_VICTORY\"},\r\n     [\"Archimedes\"] = {type=\"White\", cost=4},\r\n     [\"Leonidas\"] = {type=\"White\", cost=2},\r\n     [\"Hammurabi\"] = {type=\"White\", cost=2},\r\n     [\"Imhotep\"] = {type=\"White\", cost=3},\r\n     [\"Amytis\"] = {type=\"White\", cost=4, vpFlag=\"COUNT_OWN\", target=\"wonderStagesBuilt\", vpPer=2},\r\n     [\"Phidias\"] = {type=\"White\", cost=3, vpFlag=\"COUNT_OWN\", target=\"Brown\", vpPer=1},\r\n     [\"Hypatia\"] = {type=\"White\", cost=4, vpFlag=\"COUNT_OWN\", target=\"Green\", vpPer=1},\r\n     [\"Plato\"] = {type=\"White\", cost=4, vpFlag=\"COLOR_SET\", vpPer=7},\r\n     [\"Ramses\"] = {type=\"White\", cost=5},\r\n     [\"Maecenas\"] = {type=\"White\", cost=1},\r\n     [\"Bilkis\"] = {type=\"White\", cost=4},\r\n     [\"Nero\"] = {type=\"White\", cost=1},\r\n     [\"Xenophon\"] = {type=\"White\", cost=2},\r\n     [\"Vitruvius\"] = {type=\"White\", cost=1},\r\n     [\"Cédrick & Thomas\"] = {type=\"White\", cost=3},\r\n\r\n     -- Leaders Expert\r\n     [\"Eurypyle\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"Red\", vpPer=5},\r\n     [\"Cornelia\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"Yellow\", vpPer=5},\r\n     [\"Theano\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"Green\", vpPer=5},\r\n     [\"Cynisca\"] = {type=\"White\", cost=-1, vpFlag=\"NO_MILITARY_DEFEAT\", vpPer=6},\r\n     [\"Gorgo\"] = {type=\"White\", cost=-5, vpFlag=\"MILITARY_PAIR\"},\r\n     [\"Makeda\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"coin\", vpPer=5},\r\n     [\"Phryne\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"Blue\", vpPer=5},\r\n     [\"Hatshepsut\"] = {type=\"White\", cost=2},\r\n     [\"Tomyris\"] = {type=\"White\", cost=4},\r\n     [\"Aganice\"] = {type=\"White\", cost=-1, science=\"swap\"},\r\n     [\"Enheduanna\"] = {type=\"White\", cost=4, science=\"most\"},\r\n     [\"Agrippina\"] = {type=\"White\", cost=1, vpFlag=\"ONLY_LEADER\", vpPer=7},\r\n     [\"Nitocris\"] = {type=\"White\", cost=-1},\r\n     [\"Telesilla\"] = {type=\"White\", cost=3},\r\n     [\"Berenice\"] = {type=\"White\", cost=2},\r\n\r\n     -- Leaders Cities\r\n     [\"Diocletian\"] = {type=\"White\", cost=2},\r\n     [\"Darius\"] = {type=\"White\", cost=4, vpFlag=\"COUNT_OWN\", target=\"Black\", vpPer=1},\r\n     [\"Octavia\"] = {type=\"White\", cost=1},\r\n     [\"Caligula\"] = {type=\"White\", cost=3},\r\n     [\"Aspasia\"] = {type=\"White\", cost=3, vp=2},\r\n     [\"Arsinoe\"] = {type=\"White\", cost=-1},\r\n}",
+      "LuaScript": "ShowHighlight = false\r\nAutoScore = true\r\n\r\nIndexOffset_Score = 11\r\nIndexStart_Total = 77\r\nIndexStart_Name = 84\r\n\r\nfunction onload()\r\n     self.createButton({\r\n          click_function = 'toggleHighlightClick',\r\n          function_owner = self,\r\n          label = 'Highlight: Off',\r\n          position = {-.64,0,-1.1},\r\n          width = 2200,\r\n          height = 400,\r\n          font_size = 300,\r\n          scale = {0.1, 0.1, 0.1}\r\n     })\r\n\r\n     self.createButton({\r\n          click_function = 'toggleAutoScoreClick',\r\n          function_owner = self,\r\n          label = 'Auto Score: On',\r\n          position = {-.15,0,-1.1},\r\n          width = 2200,\r\n          height = 400,\r\n          font_size = 300,\r\n          scale = {0.1, 0.1, 0.1}\r\n     })\r\n\r\n     self.createButton({\r\n          click_function = 'updateScoreClick',\r\n          function_owner = self,\r\n          label = 'Refresh',\r\n          position = {.64,0,-1.1},\r\n          width = 2200,\r\n          height = 400,\r\n          font_size = 300,\r\n          scale = {0.1, 0.1, 0.1}\r\n     })\r\n\r\n     local posXStart = -0.54\r\n     local posXOffset = 0.205\r\n\r\n     local posYStart = -0.72\r\n     local posYOffset = 0.133\r\n     for i=1, 7 do\r\n          for j=1, 11 do\r\n               self.createInput({\r\n                    input_function = 'updateSum',\r\n                    function_owner = self,\r\n                    label = '---',\r\n                    alignment = 3,\r\n                    position = {posXStart+(posXOffset*(i-1)),0.15,posYStart+(posYOffset*(j-1))},\r\n                    scale = {0.15,0.15,0.15},\r\n                    width = 600,\r\n                    height = 400,\r\n                    font_size = 300,\r\n                    color = {1,1,1,0},\r\n                    font_color = {0.1, 0.1, 0.1, 100},\r\n                    validation = 3\r\n               })\r\n          end\r\n     end\r\n\r\n     for i=1, 7 do\r\n          self.createInput({\r\n               input_function = 'none',\r\n               function_owner = self,\r\n               label = '----',\r\n               alignment = 3,\r\n               position = {posXStart+(posXOffset*(i-1)),0.15,0.75},\r\n               scale = {0.2,0.2,0.2},\r\n               width = 1200,\r\n               height = 400,\r\n               font_size = 300,\r\n               color = {1,1,1,0},\r\n               font_color = {0.1, 0.1, 0.1, 100},\r\n               value = 0\r\n          })\r\n     end\r\n\r\n     for i=1, 7 do\r\n          self.createInput({\r\n               input_function = 'none',\r\n               function_owner = self,\r\n               label = 'Name',\r\n               alignment = 3,\r\n               position = {posXStart+(posXOffset*(i-1)),0.15,-0.87},\r\n               scale = {0.07,0.07,0.07},\r\n               width = 1200,\r\n               height = 400,\r\n               font_size = 300,\r\n               color = {1,1,1,0},\r\n               font_color = {0.1,0.1,0.1,100},\r\n          })\r\n     end\r\nend\r\n\r\nfunction none()\r\nend\r\n\r\nfunction updateScoreClick()\r\n     startLuaCoroutine(self, 'updateScoreCo')\r\nend\r\n\r\nfunction updateScoreCo()\r\n     local validColors = Global.getVar(\"ValidColors\")\r\n     local playerColors = Global.getVar(\"TurnOrder\")\r\n     local players = Global.call(\"getValidSeatedPlayers\")\r\n     local scoreTally = {}\r\n\r\n     -- init\r\n     for _, color in pairs(playerColors) do\r\n          scoreTally[color] = {\r\n               scoreLater = {},    --cards to score on second pass\r\n               exist = false,\r\n               wonder = 0,\r\n               wonderStagesBuilt = 0,\r\n               wonderComplete = false,\r\n               coins = 0,\r\n               debt = 0,\r\n               conflict1Count = 0,\r\n               conflict2Count = 0,\r\n               conflict3Count = 0,\r\n               conflictVictoryTotal = 0,\r\n               militaryDefeat = 0,\r\n               navalVictoryTotal = 0,\r\n               navalDefeat = 0,\r\n               compass = 0,\r\n               gear = 0,\r\n               tablet = 0,\r\n               Brown = 0,\r\n               Gray = 0,\r\n               Red = 0,\r\n               Yellow = 0,\r\n               Blue = 0,\r\n               Green = 0,\r\n               Black = 0,\r\n               Purple = 0,\r\n               White = 0,\r\n               Blue_vp = 0,\r\n               Yellow_vp = 0,\r\n               Green_vp = 0,\r\n               Purple_vp = 0,\r\n               Black_vp = 0,\r\n               White_vp = 0,\r\n          }\r\n     end\r\n\r\n     local vp = 0\r\n\r\n     -- calculate stats for each player based on owned objects\r\n     for _, obj in pairs(getObjectsWithTag(\"Score\")) do\r\n          local owner = obj.getVar(\"owner\")\r\n          local score = scoreTally[owner]\r\n          if owner then\r\n               score.exist = true\r\n\r\n               if obj.hasTag(\"Coin\") then\r\n                    score.coins = score.coins + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"Debt\") then\r\n                    score.debt = score.debt + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"ConflictVictory\") then\r\n                    vp = tonumber(obj.getDescription())\r\n                    if vp == 1 then\r\n                         score.conflict1Count = score.conflict1Count + 1\r\n                    elseif vp == 3 then\r\n                         score.conflict2Count = score.conflict2Count + 1\r\n                    elseif vp == 5 then\r\n                         score.conflict3Count = score.conflict3Count + 1\r\n                    end\r\n                    score.conflictVictoryTotal = score.conflictVictoryTotal + vp\r\n               elseif obj.hasTag(\"MilitaryDefeat\") then\r\n                    score.militaryDefeat = score.militaryDefeat + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"NavalVictory\") then\r\n                    score.navalVictoryTotal = score.navalVictoryTotal + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"NavalDefeat\") then\r\n                    score.navalDefeat = score.navalDefeat + tonumber(obj.getDescription())\r\n               elseif obj.hasTag(\"Wonder\") then\r\n                    vp, score.wonderStagesBuilt, score.wonderComplete = scoreWonder(obj)\r\n                    score.wonder = score.wonder + vp\r\n               elseif obj.type == 'Card' and not obj.is_face_down then\r\n                    local cardData = card_db[obj.getName()]\r\n\r\n                    if not cardData then\r\n                         print(obj.getName() .. \" not found in card db.\")\r\n                         goto skip\r\n                    else\r\n                         score[cardData.type] = score[cardData.type] + 1\r\n                         \r\n                         if cardData.vp then\r\n                              local tag = cardData.type .. \"_vp\"\r\n                              score[tag] = score[tag] + cardData.vp\r\n                         end\r\n\r\n                         if cardData.vpFlag then\r\n                              score.scoreLater[#score.scoreLater + 1] = obj\r\n                         end\r\n\r\n                         if cardData.science then\r\n                              local symbol = cardData.science\r\n                              if symbol == \"select\" then  \r\n                                   local selectedSymbol = obj.getVar(\"SelectedScience\")\r\n                                   if selectedSymbol ~= \"\" then\r\n                                        symbol = selectedSymbol\r\n                                   else\r\n                                        goto skip\r\n                                   end\r\n                              elseif symbol == \"most\" or symbol == \"swap\" then\r\n                                   score.scoreLater[#score.scoreLater + 1] = obj\r\n                                   goto skip\r\n                              end\r\n\r\n                              score[symbol] = score[symbol] + 1\r\n                         end\r\n                    end\r\n               end\r\n\r\n               if obj.hasTag(\"ScienceSelect\") then\r\n                    local selectedSymbol = obj.getVar(\"SelectedScience\")\r\n                    if selectedSymbol ~= \"\" then\r\n                         score[selectedSymbol] = score[selectedSymbol] + 1\r\n                    else\r\n                         goto skip\r\n                    end\r\n               end\r\n          end\r\n\r\n          ::skip::\r\n     end\r\n\r\n     -- second pass scoring\r\n     for _, color in pairs(playerColors) do\r\n          local score = scoreTally[color]\r\n          local neighbors = {getLeftNeighbor(color, scoreTally), getRightNeighbor(color, scoreTally)}\r\n\r\n          for _, card in pairs(score.scoreLater) do\r\n               local cardData = card_db[card.getName()]\r\n               local tag = cardData.type .. \"_vp\"\r\n               local flag = cardData.vpFlag\r\n               local vp = 0\r\n\r\n               if flag == \"COUNT_OWN\" then\r\n                    if not score[cardData.target] then print(cardData.target .. \" target not found.\") end\r\n                    vp = score[cardData.target] * cardData.vpPer\r\n               elseif flag == \"COIN_OWN\" then\r\n                    vp = math.floor(score.coins / 3)\r\n               elseif flag == \"WONDER_COMPLETE\" and score.wonderComplete then\r\n                    vp = 7\r\n               elseif flag == \"BROWN_GRAY_PURPLE_OWN\" then\r\n                    vp = score.Brown + score.Gray + score.Purple\r\n               elseif flag == \"NEIGHBORS\" then\r\n                    for i=1, #neighbors do\r\n                         vp = vp + scoreTally[neighbors[i]][cardData.target] * cardData.vpPer\r\n                    end\r\n               elseif flag == \"MOST\" then\r\n                    local most = true\r\n                    for i=1, #neighbors do\r\n                         if score[cardData.target] <= scoreTally[neighbors[i]][cardData.target] then\r\n                              most = false\r\n                              break\r\n                         end\r\n                    end\r\n\r\n                    if most then\r\n                         vp = cardData.vpPer\r\n                    end\r\n               elseif flag == \"COIN_NEIGHBORS\" then\r\n                    local coinTotal = 0\r\n                    for i=1, #neighbors do\r\n                         coinTotal = coinTotal + scoreTally[neighbors[i]].coin\r\n                    end\r\n                    vp = math.min(10, math.floor(coinTotal / 3))\r\n               elseif flag == \"WONDER_NEIGHBORS\" then\r\n                    for i=1, #neighbors do\r\n                         vp = vp + scoreTally[neighbors[i]].wonderStagesBuilt\r\n                    end\r\n                    vp = vp + score.wonderStagesBuilt\r\n               elseif flag == \"SCIENCE_SET\" then\r\n                    vp = math.min(score.compass, math.min(score.tablet, score.gear)) * cardData.vpPer\r\n               elseif flag == \"COLOR_SET\" then\r\n                    local colors = {\"Blue\", \"Red\", \"Brown\", \"Gray\", \"Yellow\", \"Green\", \"Purple\"}\r\n                    local lowestN = 100\r\n                    for i=1, #colors do\r\n                         lowestN = math.min(score[colors[i]], lowestN)\r\n                    end\r\n                    vp = lowestN * cardData.vpPer\r\n               elseif flag == \"VP_PER_MILITARY1\" then\r\n                    vp = score.conflict1Count * 2\r\n               elseif flag == \"VP_PER_MILITARY3\" then\r\n                    vp = score.conflict2Count * 3\r\n               elseif flag == \"VP_PER_MILITARY5\" then\r\n                    vp = score.conflict3Count * 4\r\n               elseif flag == \"VP_PER_MIL_VICTORY\" then\r\n                    vp = score.conflict1Count + score.conflict2Count + score.conflict3Count\r\n               elseif flag == \"BLUE_RED_GREEN_SET\" then\r\n                    vp = math.min(score.Blue, math.min(score.Red, score.Green)) * cardData.vpPer\r\n               elseif flag == \"ONLY_LEADER\" then\r\n                    if score.White == 1 then\r\n                         vp = cardData.vpPer\r\n                    end\r\n               elseif flag == \"NO_MILITARY_DEFEAT\" then\r\n                    if score.militaryDefeat == 0 then\r\n                         vp = cardData.vpPer\r\n                    end\r\n               elseif flag == \"MILITARY_PAIR\" then\r\n                    vp = math.floor(score.conflict1Count / 2) * 1\r\n                    vp = vp + math.floor(score.conflict2Count / 2) * 3\r\n                    vp = vp + math.floor(score.conflict3Count / 2) * 5\r\n               end\r\n\r\n               if cardData.science == \"most\" then\r\n                    local symbols = {\"compass\", \"tablet\", \"gear\"}\r\n                    local mostCount = -1\r\n                    local mostSymbol = \"\"\r\n                    for i=1, #symbols do\r\n                         if score[symbols[i]] > mostCount then\r\n                              mostCount = score[symbols[i]]\r\n                              mostSymbol = symbols[i]\r\n                         end\r\n                    end\r\n\r\n                    score[mostSymbol] = score[mostSymbol] + 1\r\n\r\n                    goto skip\r\n               elseif cardData.science == \"swap\" then\r\n                    local source = card.getVar(\"SelectedSource\")\r\n                    local dest = card.getVar(\"SelectedDest\")\r\n\r\n                    if source ~= \"\" and score[source] > 0 then\r\n                         score[source] = score[source] - 1\r\n                         score[dest] = score[dest] + 1\r\n                    end\r\n\r\n                    goto skip\r\n               end\r\n\r\n               card.clearButtons()\r\n               card.createButton({\r\n                    click_function = \"none\",\r\n                    function_owner = self,\r\n                    width = 0,\r\n                    height = 0,\r\n                    label = vp .. \" VP\",\r\n                    font_size = 80,\r\n                    position = {-.85, 0.3, -1.2},\r\n                    font_color = cardData.type == \"White\" and \"Black\" or \"White\"\r\n               })\r\n\r\n               score[tag] = score[tag] + vp\r\n\r\n               ::skip::\r\n          end\r\n     end\r\n\r\n     for _, color in pairs(playerColors) do\r\n          local i = validColors[color]\r\n          local score = scoreTally[color]\r\n          local scoreIndexStart = (i-1) * IndexOffset_Score\r\n\r\n          if score.exist then\r\n               -- update name\r\n               self.editInput({\r\n                    index = IndexStart_Name + i - 1,\r\n                    value = Player[color].steam_name or color\r\n               })\r\n\r\n               -- update wonder vp\r\n               self.editInput({\r\n                    index = scoreIndexStart,\r\n                    value = score.wonder,\r\n               })\r\n\r\n               -- update coin + debt\r\n               self.editInput({\r\n                    index = scoreIndexStart + 1,\r\n                    value = math.floor(score.coins / 3) + score.debt,\r\n               })\r\n\r\n               -- military vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 2,\r\n                    value = score.conflictVictoryTotal + score.militaryDefeat\r\n               })\r\n\r\n               -- blue vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 3,\r\n                    value = score.Blue_vp\r\n               })\r\n\r\n               -- yellow vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 4,\r\n                    value = score.Yellow_vp\r\n               })\r\n\r\n               -- science vp\r\n               local sets = math.min(score.compass, math.min(score.tablet, score.gear))\r\n               self.editInput({\r\n                    index = scoreIndexStart + 5,\r\n                    value = sets * 7 + math.pow(score.compass, 2) + math.pow(score.tablet, 2) + math.pow(score.gear, 2)\r\n               })\r\n\r\n               -- purple vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 6,\r\n                    value = score.Purple_vp\r\n               })\r\n\r\n               -- black vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 7,\r\n                    value = score.Black_vp\r\n               })\r\n\r\n               -- leader vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 8,\r\n                    value = score.White_vp\r\n               })\r\n\r\n               -- naval vp\r\n               self.editInput({\r\n                    index = scoreIndexStart + 9,\r\n                    value = score.navalVictoryTotal + score.navalDefeat\r\n               })\r\n\r\n               updateSum(self, color, nil, false)\r\n          end\r\n     end\r\n\r\n     return 1\r\nend\r\n\r\nfunction updateSum(obj, player_clicker_color, input_value, selected)\r\n     local sumIndex = 76\r\n\r\n     local inputs = obj.getInputs()\r\n\r\n     if selected == false then\r\n          for i=1, 7 do\r\n               local startIndex = (i - 1) * 11\r\n               local score = 0\r\n               for j=1, 11 do\r\n                    if inputs[startIndex + j].value ~= '' and inputs[startIndex + j].value ~= '-' then\r\n                         score = score + tonumber(inputs[startIndex + j].value)\r\n                    end\r\n               end\r\n\r\n               obj.editInput({\r\n                    index = sumIndex + i,\r\n                    value = score\r\n               })\r\n          end\r\n     end\r\nend\r\n\r\nfunction toggleHighlightClick()\r\n     ShowHighlight = not ShowHighlight\r\n     self.editButton({\r\n          index = 0,\r\n          label = \"Highlight: \" .. (ShowHighlight and \"On\" or \"Off\")\r\n     })\r\n\r\n     if ShowHighlight then\r\n          startLuaCoroutine(self, \"highlightOnCo\")\r\n     else\r\n          startLuaCoroutine(self, \"highlightOffCo\")\r\n     end\r\nend\r\n\r\nfunction toggleAutoScoreClick()\r\n     AutoScore = not AutoScore\r\n     self.editButton({\r\n          index = 1,\r\n          label = \"Auto Score: \" .. (AutoScore and \"On\" or \"Off\")\r\n     })\r\nend\r\n\r\nfunction highlightOnCo()\r\n     for _, obj in pairs(getAllObjects()) do\r\n          if obj.hasTag(\"Score\") then\r\n               local player = obj.getVar(\"owner\")\r\n               if player then obj.highlightOn(player) end\r\n          end\r\n     end\r\n     return 1\r\nend\r\n\r\nfunction highlightOffCo()\r\n     for _, obj in pairs(getAllObjects()) do\r\n          obj.highlightOff()\r\n     end\r\n     return 1\r\nend\r\n\r\nfunction wait(time)\r\n     local start = os.time()\r\n     repeat\r\n         coroutine.yield(0)\r\n     until os.time() > start + time\r\n end\r\n\r\nfunction scoreWonder(wonder)\r\n     local info = wonder_db[wonder.getName()]\r\n\r\n     if not info then \r\n          print(wonder.getName() .. \" not found in wonder db.\")\r\n          return 0\r\n     end\r\n\r\n     local vp = 0\r\n     local stagesBuilt = 0\r\n     local vpArr = wonder.is_face_down and info.nightVp or info.dayVp\r\n     local castPoints = {1.3, 0, -1.3}\r\n\r\n     if #vpArr ~= 3 then\r\n          castPoints = wonder.is_face_down and info.nightPos or info.dayPos\r\n     elseif wonder.is_face_down then\r\n          castPoints[1] = -castPoints[1]\r\n          castPoints[3] = -castPoints[3]\r\n     end\r\n\r\n     if not castPoints then\r\n          print(wonder.getName() .. \" missing cast points table.\")\r\n          return 0\r\n     end\r\n\r\n     for i=1, #castPoints do\r\n          local hits = Physics.cast({\r\n               origin = wonder.positionToWorld({castPoints[i], (wonder.is_face_down and -1 or 1), 1.6}),\r\n               direction = {0, -1, 0},\r\n               max_distance = 2,\r\n               --debug = true\r\n          })\r\n\r\n          for _, hit in pairs(hits) do\r\n               if hit.hit_object.type == 'Card' and hit.hit_object.is_face_down then\r\n                    vp = vp + vpArr[i]\r\n                    stagesBuilt = stagesBuilt + 1\r\n                    break\r\n               end\r\n          end\r\n     end\r\n\r\n     return vp, stagesBuilt, stagesBuilt >= #castPoints\r\nend\r\n\r\nfunction getLeftNeighbor(playerColor, scoreTable)\r\n     local validColors = Global.getVar(\"ValidColors\")\r\n     local turnOrder = Global.getVar(\"TurnOrder\")\r\n     local playerIndex = validColors[playerColor]\r\n     for i=1, #turnOrder-1 do\r\n          local ind = playerIndex + i\r\n          if ind > 7 then ind = ind - 7 end\r\n          if scoreTable[turnOrder[ind]].exist then\r\n               return turnOrder[ind]\r\n          end\r\n     end\r\n\r\n     -- no neighbor found\r\n     return playerColor\r\nend\r\n\r\nfunction getRightNeighbor(playerColor, scoreTable)\r\n     local validColors = Global.getVar(\"ValidColors\")\r\n     local turnOrder = Global.getVar(\"TurnOrder\")\r\n     local playerIndex = validColors[playerColor]\r\n     for i=1, #turnOrder-1 do\r\n          local ind = playerIndex - i\r\n          if ind <= 0 then ind = ind + 7 end\r\n          if scoreTable[turnOrder[ind]].exist then\r\n               return turnOrder[ind]\r\n          end\r\n     end\r\n\r\n     -- no neighbor found\r\n     return playerColor\r\nend\r\n\r\nwonder_db = {\r\n     [\"The Temple of Artemis in Éphesos\"] = {dayVp={3,0,7}, nightVp={2,3,5}},\r\n     [\"The Colossus of Rhódos\"] = {dayVp={3,0,7}, nightVp={3,4}, nightPos = {0,-1.3},},\r\n     [\"The Mausoleum of Halikarnassos\"] = {dayVp={3,0,7}, nightVp={2,1,0}},\r\n     [\"The Hanging Gardens of Babylon\"] = {dayVp={3,0,7}, nightVp={0,0}, nightPos = {1.3,0}},\r\n     [\"The Pyramids of Gizah\"] = {dayVp={3,5,7}, nightVp={3,5,5,7}, nightPos = {1.3,0}},\r\n     [\"The Statue of Zeus in Olympia\"] = {dayVp={3,0,7}, nightVp={2,3,5}},\r\n     [\"The Lighthouse of Alexandria\"] = {dayVp={3,0,7}, nightVp={0,0,7}},\r\n     [\"The Al-Khazneh of Petra\"] = {dayVp={3,7,7}, nightVp={3,14}, nightPos = {-0.6, 0.6}},\r\n     [\"Hagia Sophia of Byzantium\"] = {dayVp={3,4,7}, nightVp={4,6}, nightPos = {-0.6, 0.6}},\r\n     [\"The Great Temple of Ramesses II in Abu Simbel\"] = {dayVp={3,5,-1}, nightVp={-1,-1}},\r\n     [\"Colosseum Of Roma\"] = {dayVp={4,6}, nightVp={0,3,3}, dayPos={0.6,-0.6}},\r\n     [\"Siracusa\"] = {dayVp={0,3,0}, nightVp={0,0,0}}\r\n}\r\n \r\ncard_db = {\r\n     -- Age 1 Base\r\n     [\"Lumber Yard\"] = {type = \"Brown\"},\r\n     [\"Stone Pit\"] = {type = \"Brown\"},\r\n     [\"Clay Pool\"] = {type = \"Brown\"},\r\n     [\"Ore Vein\"] = {type = \"Brown\"},\r\n     [\"Timber Yard\"] = {type = \"Brown\"},\r\n     [\"Clay Pit\"] = {type = \"Brown\"},\r\n     [\"Excavation\"] = {type = \"Brown\"},\r\n     [\"Forest Cave\"] = {type = \"Brown\"},\r\n     [\"Tree Farm\"] = {type = \"Brown\"},\r\n     [\"Mine\"] = {type = \"Brown\"},\r\n     [\"Glassworks\"] = {type = \"Gray\"},\r\n     [\"Press\"] = {type = \"Gray\"},\r\n     [\"Loom\"] = {type = \"Gray\"},\r\n     [\"Well\"] = {type = \"Blue\", vp = 3},\r\n     [\"Theater\"] = {type = \"Blue\", vp = 3},\r\n     [\"Baths\"] = {type = \"Blue\", vp = 3},\r\n     [\"Altar\"] = {type = \"Blue\", vp = 3},\r\n     [\"Stockade\"] = {type = \"Red\"},\r\n     [\"Guard Tower\"] = {type = \"Red\"},\r\n     [\"Barracks\"] = {type = \"Red\"},\r\n     [\"West Trading Post\"] = {type = \"Yellow\"},\r\n     [\"East Trading Post\"] = {type = \"Yellow\"},\r\n     [\"Marketplace\"] = {type = \"Yellow\"},\r\n     [\"Tavern\"] = {type = \"Yellow\"},\r\n     [\"Apothecary\"] = {type = \"Green\", science=\"compass\"},\r\n     [\"Scriptorium\"] = {type = \"Green\", science=\"tablet\"},\r\n     [\"Workshop\"] = {type = \"Green\", science=\"gear\"},\r\n\r\n     -- Age 2 Base\r\n     [\"Sawmill\"] = {type = \"Brown\"},\r\n     [\"Quarry\"] = {type = \"Brown\"},\r\n     [\"Brickyard\"] = {type = \"Brown\"},\r\n     [\"Foundry\"] = {type = \"Brown\"},\r\n     [\"Statue\"] = {type = \"Blue\", vp = 4},\r\n     [\"Temple\"] = {type = \"Blue\", vp = 4},\r\n     [\"Courthouse\"] = {type = \"Blue\", vp = 4},\r\n     [\"Aqueduct\"] = {type = \"Blue\", vp = 5},\r\n     [\"Caravansery\"] = {type = \"Yellow\"},\r\n     [\"Forum\"] = {type = \"Yellow\"},\r\n     [\"Vineyard\"] = {type = \"Yellow\"},\r\n     [\"Bazar\"] = {type = \"Yellow\"},\r\n     [\"Stables\"] = {type = \"Red\"},\r\n     [\"Archery Range\"] = {type = \"Red\"},\r\n     [\"Walls\"] = {type = \"Red\"},\r\n     [\"Training Ground\"] = {type = \"Red\"},\r\n     [\"Dispensary\"] = {type = \"Green\", science=\"compass\"},\r\n     [\"Laboratory\"] = {type = \"Green\", science=\"gear\"},\r\n     [\"Library\"] = {type = \"Green\", science=\"tablet\"},\r\n     [\"School\"] = {type = \"Green\", science=\"tablet\"},\r\n\r\n     -- Age 3 Base\r\n     [\"Pantheon\"] = {type = \"Blue\", vp = 7},\r\n     [\"Gardens\"] = {type = \"Blue\", vp = 5},\r\n     [\"Town Hall\"] = {type = \"Blue\", vp = 6},\r\n     [\"Palace\"] = {type = \"Blue\", vp = 8},\r\n     [\"Senate\"] = {type = \"Blue\", vp = 6},\r\n     [\"Lighthouse\"] = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"Yellow\", vpPer=1},\r\n     [\"Haven\"]  = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"Brown\", vpPer=1},\r\n     [\"Chamber of Commerce\"] = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"Gray\", vpPer=2},\r\n     [\"Ludus\"] = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"Red\", vpPer=1},\r\n     [\"Arena\"] = {type = \"Yellow\", vpFlag=\"COUNT_OWN\", target=\"wonderStagesBuilt\", vpPer=1},\r\n     [\"Castrum\"] = {type = \"Red\"},\r\n     [\"Fortifications\"] = {type = \"Red\"},\r\n     [\"Circus\"] = {type = \"Red\"},\r\n     [\"Arsenal\"] = {type = \"Red\"},\r\n     [\"Siege Workshop\"] = {type = \"Red\"},\r\n     [\"Lodge\"] = {type = \"Green\", science=\"compass\"},\r\n     [\"Academy\"] = {type = \"Green\", science=\"compass\"},\r\n     [\"Observatory\"] = {type = \"Green\", science=\"gear\"},\r\n     [\"Study\"] = {type = \"Green\", science=\"gear\"},\r\n     [\"University\"] = {type = \"Green\", science=\"tablet\"},\r\n     [\"Workers Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Brown\", vpPer=1},\r\n     [\"Craftsmens Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Gray\", vpPer=2},\r\n     [\"Magistrates Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Blue\", vpPer=1},\r\n     [\"Traders Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Yellow\", vpPer=1},\r\n     [\"Builders Guild\"] = {type=\"Purple\", vpFlag=\"WONDER_STAGE_NEIGHBORS\", vpPer=1},\r\n     [\"Spies Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Red\", vpPer=1},\r\n     [\"Philosophers Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Green\", vpPer=1},\r\n     [\"Decorators Guild\"] = {type=\"Purple\", vpFlag=\"WONDER_COMPLETE\"},\r\n     [\"Scientists Guild\"] = {type=\"Purple\", science=\"select\"},\r\n     [\"Shipowners Guild\"] = {type=\"Purple\", vpFlag=\"BROWN_GRAY_PURPLE_OWN\", vpPer=1},\r\n     [\"Architects Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Purple\", vpPer=3},\r\n     [\"Gamers Guild\"] = {type=\"Purple\", vpFlag=\"COIN_NEIGHBORS\"},\r\n\r\n     -- Age 1 Cities\r\n     [\"Opium Stash\"] = {type=\"Black\"},\r\n     [\"Raider Camp\"] = {type=\"Black\"},\r\n     [\"Hideout\"] = {type=\"Black\"},\r\n     [\"Smuggler's Cache\"] = {type=\"Black\"},\r\n     [\"Residence\"] = {type=\"Black\", vp=1},\r\n     [\"Cells\"] = {type=\"Black\", vpFlag=\"VP_PER_MILITARY1\"},\r\n     [\"City Gates\"] = {type=\"Black\", vp=4},\r\n     [\"West Clandestine Wharf\"] = {type=\"Black\"},\r\n     [\"Customs\"] = {type=\"Black\", vp=4},\r\n     [\"East Clandestine Wharf\"] = {type=\"Black\"},\r\n     [\"Militia\"] = {type=\"Black\"},\r\n     [\"Dive\"] = {type=\"Black\"},\r\n     [\"Pigeonhole\"] = {type=\"Black\", science=\"select\"},\r\n     [\"Secret Warehouse\"] = {type=\"Black\"},\r\n\r\n     -- Age 2 Cities\r\n     [\"Gambling Den\"] = {type=\"Black\"},\r\n     [\"Architect Firm\"] = {type=\"Black\", vp=2},\r\n     [\"Sepulcher\"] = {type=\"Black\", vp=4},\r\n     [\"Trade Center\"] = {type=\"Black\"},\r\n     [\"Opium Den\"] = {type=\"Black\"},\r\n     [\"Raider Fort\"] = {type=\"Black\"},\r\n     [\"Lair\"] = {type=\"Black\", vp=3},\r\n     [\"Band Of Spies\"] = {type=\"Black\", science=\"select\"},\r\n     [\"Black Market\"] = {type=\"Black\"},\r\n     [\"Mercenaries\"] = {type=\"Black\"},\r\n     [\"Guardhouse\"] = {type=\"Black\", vpFlag=\"VP_PER_MILITARY3\"},\r\n     [\"Tabularium\"] = {type=\"Black\", vp=6},\r\n     [\"Forging Agency\"] = {type=\"Black\"},\r\n     [\"Consulate\"] = {type=\"Black\", vp=2},\r\n\r\n     -- Age 3 Cities\r\n     [\"Memorial\"] = {type=\"Black\"},\r\n     [\"Chamber Of Builders\"] = {type=\"Black\", vp=4},\r\n     [\"Cenotaph\"] = {type=\"Black\", vp=5},\r\n     [\"Mint\"] = {type=\"Black\", vp=8},\r\n     [\"Opium Distillery\"] = {type=\"Black\"},\r\n     [\"Raider Garrison\"] = {type=\"Black\"},\r\n     [\"Brotherhood\"] = {type=\"Black\", vp=4},\r\n     [\"Torture Chamber\"] = {type=\"Black\", science=\"select\"},\r\n     [\"Secret Network\"] = {type=\"Black\", vpFlag=\"COUNT_OWN\", target=\"Black\", vpPer=1},\r\n     [\"Contingent\"] = {type=\"Black\"},\r\n     [\"Prison\"] = {type=\"Black\", vpFlag=\"VP_PER_MILITARY5\"},\r\n     [\"Capitol\"] = {type=\"Black\", vp=8},\r\n     [\"Slave Market\"] = {type=\"Black\", vpFlag=\"VP_PER_MIL_VICTORY\"},\r\n     [\"Embassy\"] = {type=\"Black\", vp=3},\r\n     [\"Shadow Guild\"] = {type=\"Purple\", vpFlag=\"NEIGHBORS\", target=\"Black\", vpPer=1},\r\n\r\n     -- Leaders\r\n     [\"Cleopatra\"] = {type=\"White\", cost=4, vp=5},\r\n     [\"Hannibal\"] = {type=\"White\", cost=2},\r\n     [\"Caesar\"] = {type=\"White\", cost=5},\r\n     [\"Euclid\"] = {type=\"White\", cost=5, science=\"compass\"},\r\n     [\"Pythagoras\"] = {type=\"White\", cost=5, science=\"gear\"},\r\n     [\"Ptolemy\"] = {type=\"White\", cost=5, science=\"tablet\"},\r\n     [\"Aristotle\"] = {type=\"White\", cost=3, vpFlag=\"SCIENCE_SET\", vpPer=3},\r\n     [\"Midas\"] = {type=\"White\", cost=3, vpFlag=\"COIN_OWN\"},\r\n     [\"Solomon\"] = {type=\"White\", cost=3},\r\n     [\"Croesus\"] = {type=\"White\", cost=1},\r\n     [\"Sappho\"] = {type=\"White\", cost=1, vp=2},\r\n     [\"Zenobia\"] = {type=\"White\", cost=2, vp=3},\r\n     [\"Nefertiti\"] = {type=\"White\", cost=3, vp=4},\r\n     [\"Pericles\"] = {type=\"White\", cost=6, vpFlag=\"COUNT_OWN\", target=\"Red\", vpPer=2},\r\n     [\"Varro\"] = {type=\"White\", cost=3, vpFlag=\"COUNT_OWN\", target=\"Yellow\", vpPer=1},\r\n     [\"Praxiteles\"] = {type=\"White\", cost=3, vpFlag=\"COUNT_OWN\", target=\"Gray\", vpPer=2},\r\n     [\"Nebuchadnezzar\"] = {type=\"White\", cost=4, vpFlag=\"COUNT_OWN\", target=\"Blue\", vpPer=1},\r\n     [\"Hiram\"] = {type=\"White\", cost=3, vpFlag=\"COUNT_OWN\", target=\"Purple\", vpPer=2},\r\n     [\"Justinian\"] = {type=\"White\", cost=3, vpFlag=\"BLUE_RED_GREEN_SET\", vpPer=3},\r\n     [\"Alexander\"] = {type=\"White\", cost=3, vpFlag=\"VP_PER_MIL_VICTORY\"},\r\n     [\"Archimedes\"] = {type=\"White\", cost=4},\r\n     [\"Leonidas\"] = {type=\"White\", cost=2},\r\n     [\"Hammurabi\"] = {type=\"White\", cost=2},\r\n     [\"Imhotep\"] = {type=\"White\", cost=3},\r\n     [\"Amytis\"] = {type=\"White\", cost=4, vpFlag=\"COUNT_OWN\", target=\"wonderStagesBuilt\", vpPer=2},\r\n     [\"Phidias\"] = {type=\"White\", cost=3, vpFlag=\"COUNT_OWN\", target=\"Brown\", vpPer=1},\r\n     [\"Hypatia\"] = {type=\"White\", cost=4, vpFlag=\"COUNT_OWN\", target=\"Green\", vpPer=1},\r\n     [\"Plato\"] = {type=\"White\", cost=4, vpFlag=\"COLOR_SET\", vpPer=7},\r\n     [\"Ramses\"] = {type=\"White\", cost=5},\r\n     [\"Maecenas\"] = {type=\"White\", cost=1},\r\n     [\"Bilkis\"] = {type=\"White\", cost=4},\r\n     [\"Nero\"] = {type=\"White\", cost=1},\r\n     [\"Xenophon\"] = {type=\"White\", cost=2},\r\n     [\"Vitruvius\"] = {type=\"White\", cost=1},\r\n     [\"Cédrick & Thomas\"] = {type=\"White\", cost=3},\r\n\r\n     -- Leaders Expert\r\n     [\"Eurypyle\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"Red\", vpPer=5},\r\n     [\"Cornelia\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"Yellow\", vpPer=5},\r\n     [\"Theano\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"Green\", vpPer=5},\r\n     [\"Cynisca\"] = {type=\"White\", cost=-1, vpFlag=\"NO_MILITARY_DEFEAT\", vpPer=6},\r\n     [\"Gorgo\"] = {type=\"White\", cost=-5, vpFlag=\"MILITARY_PAIR\"},\r\n     [\"Makeda\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"coin\", vpPer=5},\r\n     [\"Phryne\"] = {type=\"White\", cost=-1, vpFlag=\"MOST\", target=\"Blue\", vpPer=5},\r\n     [\"Hatshepsut\"] = {type=\"White\", cost=2},\r\n     [\"Tomyris\"] = {type=\"White\", cost=4},\r\n     [\"Aganice\"] = {type=\"White\", cost=-1, science=\"swap\"},\r\n     [\"Enheduanna\"] = {type=\"White\", cost=4, science=\"most\"},\r\n     [\"Agrippina\"] = {type=\"White\", cost=1, vpFlag=\"ONLY_LEADER\", vpPer=7},\r\n     [\"Nitocris\"] = {type=\"White\", cost=-1},\r\n     [\"Telesilla\"] = {type=\"White\", cost=3},\r\n     [\"Berenice\"] = {type=\"White\", cost=2},\r\n\r\n     -- Leaders Cities\r\n     [\"Diocletian\"] = {type=\"White\", cost=2},\r\n     [\"Darius\"] = {type=\"White\", cost=4, vpFlag=\"COUNT_OWN\", target=\"Black\", vpPer=1},\r\n     [\"Octavia\"] = {type=\"White\", cost=1},\r\n     [\"Caligula\"] = {type=\"White\", cost=3},\r\n     [\"Aspasia\"] = {type=\"White\", cost=3, vp=2},\r\n     [\"Arsinoe\"] = {type=\"White\", cost=-1},\r\n}",
       "LuaScriptState": ""
     },
     {
@@ -6409,9 +6423,9 @@
       "Transform": {
         "posX": 87.50013,
         "posY": 1.65947747,
-        "posZ": 34.5006027,
-        "rotX": 0.0008469795,
-        "rotY": 180.000458,
+        "posZ": 34.50063,
+        "rotX": 0.000846928,
+        "rotY": 180.000519,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -7054,9 +7068,9 @@
       "Transform": {
         "posX": 90.50015,
         "posY": 1.62096512,
-        "posZ": 34.5007973,
-        "rotX": 0.0008468719,
-        "rotY": 179.9998,
+        "posZ": 34.50082,
+        "rotX": 0.0008476019,
+        "rotY": 179.999985,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -7226,11 +7240,11 @@
       "GUID": "501ae8",
       "Name": "Deck",
       "Transform": {
-        "posX": 81.5002747,
+        "posX": 81.50028,
         "posY": 1.71237266,
-        "posZ": 30.50087,
-        "rotX": 0.000847130257,
-        "rotY": 180.0003,
+        "posZ": 30.5009251,
+        "rotX": 0.000846882351,
+        "rotY": 180.000488,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -7260,6 +7274,8 @@
       "Hands": false,
       "SidewaysCard": false,
       "DeckIDs": [
+        16044,
+        16043,
         16037,
         16041,
         16040,
@@ -7278,8 +7294,6 @@
         16026,
         16035,
         16042,
-        16043,
-        16044,
         16045
       ],
       "CustomDeck": {
@@ -7306,6 +7320,120 @@
       "LuaScriptState": "",
       "XmlUI": "",
       "ContainedObjects": [
+        {
+          "GUID": "c158eb",
+          "Name": "Card",
+          "Transform": {
+            "posX": 78.7747345,
+            "posY": 1.82717645,
+            "posZ": 31.638,
+            "rotX": 0.0008056409,
+            "rotY": 180.0314,
+            "rotZ": 180.005341,
+            "scaleX": 1.25705588,
+            "scaleY": 1.0,
+            "scaleZ": 1.25705588
+          },
+          "Nickname": "Scriptorium",
+          "Description": "At the end of the game, gain the indicated science symbol and add it to your collection of Green cards.\n\nFor every matching scientific symbol you gain n² victory points.\nFor each complete set of 3 different science symbols, gain 7 victory points.",
+          "GMNotes": "",
+          "ColorDiffuse": {
+            "r": 0.713235259,
+            "g": 0.713235259,
+            "b": 0.713235259
+          },
+          "Tags": [
+            "Card",
+            "Score"
+          ],
+          "LayoutGroupSortIndex": 0,
+          "Value": 0,
+          "Locked": false,
+          "Grid": true,
+          "Snap": true,
+          "IgnoreFoW": false,
+          "MeasureMovement": false,
+          "DragSelectable": true,
+          "Autoraise": true,
+          "Sticky": true,
+          "Tooltip": true,
+          "GridProjection": false,
+          "HideWhenFaceDown": true,
+          "Hands": true,
+          "CardID": 16044,
+          "SidewaysCard": false,
+          "CustomDeck": {
+            "160": {
+              "FaceURL": "http://cloud-3.steamusercontent.com/ugc/1636486603311160873/5D4E54BA5BB37AA58389A46CE6F1A4E6341931AC/",
+              "BackURL": "http://cloud-3.steamusercontent.com/ugc/1636486603311161609/84D07CC037564B10FD3F1942617CD1BB710D5C58/",
+              "NumWidth": 10,
+              "NumHeight": 7,
+              "BackIsHidden": true,
+              "UniqueBack": false,
+              "Type": 0
+            }
+          },
+          "LuaScript": "science=\"tablet\"",
+          "LuaScriptState": "",
+          "XmlUI": ""
+        },
+        {
+          "GUID": "b83ca2",
+          "Name": "Card",
+          "Transform": {
+            "posX": 81.3814,
+            "posY": 1.8467766,
+            "posZ": 31.638,
+            "rotX": -0.00034811502,
+            "rotY": 179.966171,
+            "rotZ": 180.0013,
+            "scaleX": 1.25705588,
+            "scaleY": 1.0,
+            "scaleZ": 1.25705588
+          },
+          "Nickname": "Apothecary",
+          "Description": "At the end of the game, gain the indicated science symbol and add it to your collection of Green cards.\n\nFor every matching scientific symbol you gain n² victory points.\nFor each complete set of 3 different science symbols, gain 7 victory points.",
+          "GMNotes": "",
+          "ColorDiffuse": {
+            "r": 0.713235259,
+            "g": 0.713235259,
+            "b": 0.713235259
+          },
+          "Tags": [
+            "Card",
+            "Score"
+          ],
+          "LayoutGroupSortIndex": 0,
+          "Value": 0,
+          "Locked": false,
+          "Grid": true,
+          "Snap": true,
+          "IgnoreFoW": false,
+          "MeasureMovement": false,
+          "DragSelectable": true,
+          "Autoraise": true,
+          "Sticky": true,
+          "Tooltip": true,
+          "GridProjection": false,
+          "HideWhenFaceDown": true,
+          "Hands": true,
+          "CardID": 16043,
+          "SidewaysCard": false,
+          "CustomDeck": {
+            "160": {
+              "FaceURL": "http://cloud-3.steamusercontent.com/ugc/1636486603311160873/5D4E54BA5BB37AA58389A46CE6F1A4E6341931AC/",
+              "BackURL": "http://cloud-3.steamusercontent.com/ugc/1636486603311161609/84D07CC037564B10FD3F1942617CD1BB710D5C58/",
+              "NumWidth": 10,
+              "NumHeight": 7,
+              "BackIsHidden": true,
+              "UniqueBack": false,
+              "Type": 0
+            }
+          },
+          "LuaScript": "science=\"compass\"",
+          "LuaScriptState": "",
+          "XmlUI": ""
+        },
         {
           "GUID": "ce45ae",
           "Name": "Card",
@@ -8339,120 +8467,6 @@
           "XmlUI": ""
         },
         {
-          "GUID": "b83ca2",
-          "Name": "Card",
-          "Transform": {
-            "posX": 50.6017151,
-            "posY": 1.04182422,
-            "posZ": 26.7952271,
-            "rotX": 359.39093,
-            "rotY": 179.923965,
-            "rotZ": 2.12839842,
-            "scaleX": 1.25705588,
-            "scaleY": 1.0,
-            "scaleZ": 1.25705588
-          },
-          "Nickname": "Apothecary",
-          "Description": "At the end of the game, gain the indicated science symbol and add it to your collection of Green cards.\n\nFor every matching scientific symbol you gain n² victory points.\nFor each complete set of 3 different science symbols, gain 7 victory points.",
-          "GMNotes": "",
-          "ColorDiffuse": {
-            "r": 0.713235259,
-            "g": 0.713235259,
-            "b": 0.713235259
-          },
-          "Tags": [
-            "Card",
-            "Score"
-          ],
-          "LayoutGroupSortIndex": 0,
-          "Value": 0,
-          "Locked": false,
-          "Grid": true,
-          "Snap": true,
-          "IgnoreFoW": false,
-          "MeasureMovement": false,
-          "DragSelectable": true,
-          "Autoraise": true,
-          "Sticky": true,
-          "Tooltip": true,
-          "GridProjection": false,
-          "HideWhenFaceDown": true,
-          "Hands": true,
-          "CardID": 16043,
-          "SidewaysCard": false,
-          "CustomDeck": {
-            "160": {
-              "FaceURL": "http://cloud-3.steamusercontent.com/ugc/1636486603311160873/5D4E54BA5BB37AA58389A46CE6F1A4E6341931AC/",
-              "BackURL": "http://cloud-3.steamusercontent.com/ugc/1636486603311161609/84D07CC037564B10FD3F1942617CD1BB710D5C58/",
-              "NumWidth": 10,
-              "NumHeight": 7,
-              "BackIsHidden": true,
-              "UniqueBack": false,
-              "Type": 0
-            }
-          },
-          "LuaScript": "science=\"compass\"",
-          "LuaScriptState": "",
-          "XmlUI": ""
-        },
-        {
-          "GUID": "c158eb",
-          "Name": "Card",
-          "Transform": {
-            "posX": 51.583065,
-            "posY": 1.09347379,
-            "posZ": 25.726305,
-            "rotX": 359.3576,
-            "rotY": 180.002426,
-            "rotZ": 2.2051425,
-            "scaleX": 1.25705588,
-            "scaleY": 1.0,
-            "scaleZ": 1.25705588
-          },
-          "Nickname": "Scriptorium",
-          "Description": "At the end of the game, gain the indicated science symbol and add it to your collection of Green cards.\n\nFor every matching scientific symbol you gain n² victory points.\nFor each complete set of 3 different science symbols, gain 7 victory points.",
-          "GMNotes": "",
-          "ColorDiffuse": {
-            "r": 0.713235259,
-            "g": 0.713235259,
-            "b": 0.713235259
-          },
-          "Tags": [
-            "Card",
-            "Score"
-          ],
-          "LayoutGroupSortIndex": 0,
-          "Value": 0,
-          "Locked": false,
-          "Grid": true,
-          "Snap": true,
-          "IgnoreFoW": false,
-          "MeasureMovement": false,
-          "DragSelectable": true,
-          "Autoraise": true,
-          "Sticky": true,
-          "Tooltip": true,
-          "GridProjection": false,
-          "HideWhenFaceDown": true,
-          "Hands": true,
-          "CardID": 16044,
-          "SidewaysCard": false,
-          "CustomDeck": {
-            "160": {
-              "FaceURL": "http://cloud-3.steamusercontent.com/ugc/1636486603311160873/5D4E54BA5BB37AA58389A46CE6F1A4E6341931AC/",
-              "BackURL": "http://cloud-3.steamusercontent.com/ugc/1636486603311161609/84D07CC037564B10FD3F1942617CD1BB710D5C58/",
-              "NumWidth": 10,
-              "NumHeight": 7,
-              "BackIsHidden": true,
-              "UniqueBack": false,
-              "Type": 0
-            }
-          },
-          "LuaScript": "science=\"tablet\"",
-          "LuaScriptState": "",
-          "XmlUI": ""
-        },
-        {
           "GUID": "b27993",
           "Name": "Card",
           "Transform": {
@@ -8517,9 +8531,9 @@
       "Transform": {
         "posX": 81.49992,
         "posY": 1.64491713,
-        "posZ": 26.5005569,
-        "rotX": 0.000846766168,
-        "rotY": 180.000381,
+        "posZ": 26.5005817,
+        "rotX": 0.000846891431,
+        "rotY": 180.0005,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -8979,9 +8993,9 @@
       "Transform": {
         "posX": 81.5,
         "posY": 1.644858,
-        "posZ": 22.5004559,
-        "rotX": 0.000846426759,
-        "rotY": 180.000122,
+        "posZ": 22.500473,
+        "rotX": 0.0008470361,
+        "rotY": 180.000031,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -9441,9 +9455,9 @@
       "Transform": {
         "posX": 81.50001,
         "posY": 1.64479887,
-        "posZ": 18.5003719,
-        "rotX": 0.000846451963,
-        "rotY": 179.999664,
+        "posZ": 18.50039,
+        "rotX": 0.000846798532,
+        "rotY": 179.9996,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -9903,9 +9917,9 @@
       "Transform": {
         "posX": 84.51724,
         "posY": 1.71237266,
-        "posZ": 30.5006046,
-        "rotX": 0.0008469124,
-        "rotY": 180.0003,
+        "posZ": 30.5006313,
+        "rotX": 0.0008470617,
+        "rotY": 180.000381,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -11177,9 +11191,9 @@
       "Transform": {
         "posX": 84.49998,
         "posY": 1.64491713,
-        "posZ": 26.50053,
-        "rotX": 0.0008470249,
-        "rotY": 180.000168,
+        "posZ": 26.5005531,
+        "rotX": 0.0008470223,
+        "rotY": 180.000015,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -11639,9 +11653,9 @@
       "Transform": {
         "posX": 84.50001,
         "posY": 1.644858,
-        "posZ": 22.5004673,
-        "rotX": 0.000847063,
-        "rotY": 179.99942,
+        "posZ": 22.5004864,
+        "rotX": 0.0008467289,
+        "rotY": 179.999329,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -12100,10 +12114,10 @@
       "Name": "Deck",
       "Transform": {
         "posX": 87.5,
-        "posY": 1.68830264,
-        "posZ": 30.5006618,
-        "rotX": 0.0008469984,
-        "rotY": 179.998978,
+        "posY": 1.68830252,
+        "posZ": 30.5006847,
+        "rotX": 0.0008463995,
+        "rotY": 179.998871,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -13085,8 +13099,8 @@
       "Transform": {
         "posX": 87.5,
         "posY": 1.6401031,
-        "posZ": 26.50053,
-        "rotX": 0.0008468796,
+        "posZ": 26.5005512,
+        "rotX": 0.000846907555,
         "rotY": 179.999222,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
@@ -13489,9 +13503,9 @@
       "Transform": {
         "posX": 87.4973,
         "posY": 1.640044,
-        "posZ": 22.5007515,
-        "rotX": 0.000846894458,
-        "rotY": 180.000259,
+        "posZ": 22.50077,
+        "rotX": 0.0008467094,
+        "rotY": 180.000381,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -13893,9 +13907,9 @@
       "Transform": {
         "posX": 87.49928,
         "posY": 1.63998485,
-        "posZ": 18.5005531,
-        "rotX": 0.0008467939,
-        "rotY": 180.000122,
+        "posZ": 18.50057,
+        "rotX": 0.0008469935,
+        "rotY": 180.000031,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -14297,9 +14311,9 @@
       "Transform": {
         "posX": 87.5000153,
         "posY": 1.63992572,
-        "posZ": 14.5003014,
-        "rotX": 0.000846844632,
-        "rotY": 180.000381,
+        "posZ": 14.5003147,
+        "rotX": 0.0008468296,
+        "rotY": 180.0004,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -14701,9 +14715,9 @@
       "Transform": {
         "posX": 80.5000153,
         "posY": 1.67818677,
-        "posZ": -2.50003815,
-        "rotX": 0.0008466896,
-        "rotY": 180.000168,
+        "posZ": -2.50003886,
+        "rotX": 0.000846828858,
+        "rotY": 180.0002,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -15569,9 +15583,9 @@
       "Transform": {
         "posX": 83.50001,
         "posY": 1.67818677,
-        "posZ": -2.500041,
-        "rotX": 0.0008466348,
-        "rotY": 180.000214,
+        "posZ": -2.50004244,
+        "rotX": 0.0008468299,
+        "rotY": 180.000275,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -16437,9 +16451,9 @@
       "Transform": {
         "posX": 86.49995,
         "posY": 1.67818677,
-        "posZ": -2.50010633,
-        "rotX": 0.000846778043,
-        "rotY": 180.0002,
+        "posZ": -2.5001092,
+        "rotX": 0.0008467279,
+        "rotY": 180.00029,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -17304,10 +17318,10 @@
       "Name": "Deck",
       "Transform": {
         "posX": 85.07173,
-        "posY": 1.65377176,
-        "posZ": -25.8344116,
-        "rotX": 1.20322468E-07,
-        "rotY": 89.99968,
+        "posY": 1.65377164,
+        "posZ": -25.83443,
+        "rotX": 6.40695E-08,
+        "rotY": 89.9996262,
         "rotZ": 179.999161,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -17846,10 +17860,10 @@
       "Name": "Deck",
       "Transform": {
         "posX": 85.07173,
-        "posY": 1.6538161,
-        "posZ": -22.8343544,
-        "rotX": 7.100016E-08,
-        "rotY": 89.9987259,
+        "posY": 1.653816,
+        "posZ": -22.83437,
+        "rotX": 3.62035678E-07,
+        "rotY": 89.9988,
         "rotZ": 179.999161,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -18389,9 +18403,9 @@
       "Transform": {
         "posX": 85.07173,
         "posY": 1.65386033,
-        "posZ": -19.8343372,
-        "rotX": 2.01301731E-07,
-        "rotY": 89.99016,
+        "posZ": -19.8343525,
+        "rotX": -2.4017595E-07,
+        "rotY": 89.99002,
         "rotZ": 179.999161,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -18931,9 +18945,9 @@
       "Transform": {
         "posX": 82.0716858,
         "posY": 1.63955128,
-        "posZ": -10.8341064,
-        "rotX": 0.0008464996,
-        "rotY": 180.001434,
+        "posZ": -10.8341131,
+        "rotX": 0.00084646733,
+        "rotY": 180.001511,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -19311,9 +19325,9 @@
       "Transform": {
         "posX": 85.0717545,
         "posY": 1.63955128,
-        "posZ": -10.8341446,
-        "rotX": 0.000846894342,
-        "rotY": 180.000656,
+        "posZ": -10.8341522,
+        "rotX": 0.0008470841,
+        "rotY": 180.000748,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -19690,10 +19704,10 @@
       "Name": "Deck",
       "Transform": {
         "posX": 88.07175,
-        "posY": 1.64436519,
-        "posZ": -10.83415,
-        "rotX": 0.00084764784,
-        "rotY": 180.0011,
+        "posY": 1.64436531,
+        "posZ": -10.83416,
+        "rotX": 0.0008466392,
+        "rotY": 180.001114,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -20123,11 +20137,11 @@
       "GUID": "c7db56",
       "Name": "Deck",
       "Transform": {
-        "posX": 86.50007,
+        "posX": 86.5000839,
         "posY": 1.63980746,
-        "posZ": 6.500141,
-        "rotX": 0.000846880837,
-        "rotY": 180.0001,
+        "posZ": 6.500146,
+        "rotX": 0.000846212264,
+        "rotY": 180.0,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -20523,9 +20537,9 @@
       "Transform": {
         "posX": 83.50005,
         "posY": 1.68313384,
-        "posZ": 6.50013351,
-        "rotX": 0.0008471282,
-        "rotY": 179.999924,
+        "posZ": 6.50018835,
+        "rotX": 0.0008469448,
+        "rotY": 180.000061,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -20555,9 +20569,9 @@
       "Hands": false,
       "SidewaysCard": false,
       "DeckIDs": [
+        17903,
         17931,
         17922,
-        17903,
         17929,
         17925,
         17927,
@@ -20586,6 +20600,62 @@
       "LuaScriptState": "",
       "XmlUI": "",
       "ContainedObjects": [
+        {
+          "GUID": "0cce5b",
+          "Name": "Card",
+          "Transform": {
+            "posX": 83.52318,
+            "posY": 1.80830407,
+            "posZ": 6.06004667,
+            "rotX": 0.0007199615,
+            "rotY": 180.0,
+            "rotZ": 179.303238,
+            "scaleX": 1.25705588,
+            "scaleY": 1.0,
+            "scaleZ": 1.25705588
+          },
+          "Nickname": "Aganice",
+          "Description": "At the end of the game, you can replace 1 science symbol in your City or on your Leaders with the science symbol of your choice.",
+          "GMNotes": "",
+          "ColorDiffuse": {
+            "r": 0.713235259,
+            "g": 0.713235259,
+            "b": 0.713235259
+          },
+          "Tags": [
+            "Score"
+          ],
+          "LayoutGroupSortIndex": 0,
+          "Value": 0,
+          "Locked": false,
+          "Grid": true,
+          "Snap": true,
+          "IgnoreFoW": false,
+          "MeasureMovement": false,
+          "DragSelectable": true,
+          "Autoraise": true,
+          "Sticky": true,
+          "Tooltip": true,
+          "GridProjection": false,
+          "HideWhenFaceDown": true,
+          "Hands": true,
+          "CardID": 17903,
+          "SidewaysCard": false,
+          "CustomDeck": {
+            "179": {
+              "FaceURL": "http://cloud-3.steamusercontent.com/ugc/1636486705929106205/CA7416A75386B4E8F6DDEB0DFD7B2F1C29CB8A6D/",
+              "BackURL": "http://cloud-3.steamusercontent.com/ugc/1636486705929106999/04D8DFDFBC0125730A27E55F75E7703A7078E1AF/",
+              "NumWidth": 10,
+              "NumHeight": 7,
+              "BackIsHidden": true,
+              "UniqueBack": false,
+              "Type": 0
+            }
+          },
+          "LuaScript": "-- Bundled by luabundle {\"rootModuleName\":\"Aganice.0cce5b.lua\",\"version\":\"1.6.0\"}\nlocal __bundle_require, __bundle_loaded, __bundle_register, __bundle_modules = (function(superRequire)\n\tlocal loadingPlaceholder = {[{}] = true}\n\n\tlocal register\n\tlocal modules = {}\n\n\tlocal require\n\tlocal loaded = {}\n\n\tregister = function(name, body)\n\t\tif not modules[name] then\n\t\t\tmodules[name] = body\n\t\tend\n\tend\n\n\trequire = function(name)\n\t\tlocal loadedModule = loaded[name]\n\n\t\tif loadedModule then\n\t\t\tif loadedModule == loadingPlaceholder then\n\t\t\t\treturn nil\n\t\t\tend\n\t\telse\n\t\t\tif not modules[name] then\n\t\t\t\tif not superRequire then\n\t\t\t\t\tlocal identifier = type(name) == 'string' and '\\\"' .. name .. '\\\"' or tostring(name)\n\t\t\t\t\terror('Tried to require ' .. identifier .. ', but no such module has been registered')\n\t\t\t\telse\n\t\t\t\t\treturn superRequire(name)\n\t\t\t\tend\n\t\t\tend\n\n\t\t\tloaded[name] = loadingPlaceholder\n\t\t\tloadedModule = modules[name](require, loaded, register, modules)\n\t\t\tloaded[name] = loadedModule\n\t\tend\n\n\t\treturn loadedModule\n\tend\n\n\treturn require, loaded, register, modules\nend)(nil)\n__bundle_register(\"Aganice.0cce5b.lua\", function(require, _LOADED, __bundle_register, __bundle_modules)\nrequire(\"SevenWonders/scienceSelector\")\r\n\r\nSelectedSource = \"\"\r\nSelectedDest = \"compass\"\r\n\r\nfunction onload()\r\n    self.UI.setXml([[<Defaults>\r\n    <Text fontStyle=\"Bold\" fontSize=\"30\" alignment=\"MiddleLeft\" color=\"#000000\"/>\r\n    <ToggleButton padding=\"10\" colors=\"White|Blue|#4444AA|Yellow\"/>\r\n</Defaults>\r\n\r\n<Panel id=\"scienceSelect\" position=\"0 50 -30\" width=\"200\" height=\"300\" rotation=\"0 0 180\" scale=\"0.5\">\r\n    <VerticalLayout>\r\n        <Text>Replace</Text>\r\n        <ToggleGroup allowSwitchOff=\"true\">\r\n            <HorizontalLayout>\r\n                <ToggleButton id=\"sourceCompass\" onValueChanged=\"sourceClick\"><Panel padding=\"3\"><Image image=\"compass\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"sourceTablet\" onValueChanged=\"sourceClick\"><Panel padding=\"3\"><Image image=\"tablet\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"sourceGear\" onValueChanged=\"sourceClick\"><Panel padding=\"3\"><Image image=\"gear\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n            </HorizontalLayout>\r\n        </ToggleGroup>\r\n        <Text>With</Text>\r\n        <ToggleGroup>\r\n            <HorizontalLayout>\r\n                <ToggleButton id=\"destCompass\" onValueChanged=\"destClick\"><Panel padding=\"3\"><Image image=\"compass\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"destTablet\" onValueChanged=\"destClick\"><Panel padding=\"3\"><Image image=\"tablet\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n                <ToggleButton id=\"destGear\" onValueChanged=\"destClick\"><Panel padding=\"3\"><Image image=\"gear\" preserveAspect=\"True\"/></Panel></ToggleButton>\r\n            </HorizontalLayout>\r\n        </ToggleGroup>\r\n    </VerticalLayout>\r\n</Panel>]])\r\nend\r\n\r\nfunction sourceClick(player, value, id)\r\n    if value == \"True\" then\r\n        if id == \"sourceCompass\" then\r\n            SelectedSource = \"compass\"\r\n        elseif id == \"sourceTablet\" then\r\n            SelectedSource = \"tablet\"\r\n        elseif id == \"sourceGear\" then\r\n            SelectedSource = \"gear\"\r\n        end\r\n    else\r\n        SelectedSource = \"\"\r\n    end\r\nend\r\n\r\nfunction destClick(player, value, id)\r\n    if value == \"True\" then\r\n        if id == \"destCompass\" then\r\n            SelectedDest = \"compass\"\r\n        elseif id == \"destTablet\" then\r\n            SelectedDest = \"tablet\"\r\n        elseif id == \"destGear\" then\r\n            SelectedDest = \"gear\"\r\n        end\r\n    end\r\nend\nend)\n__bundle_register(\"SevenWonders/scienceSelector\", function(require, _LOADED, __bundle_register, __bundle_modules)\nSelectedScience = \"\"\r\n\r\nfunction onObjectEnterZone(zone, object)\r\n    if object == self then\r\n        self.UI.setAttribute(\"scienceSelect\", \"active\", false)\r\n    end\r\nend\r\n\r\nfunction onObjectDrop(player, object)\r\n    if object == self and #object.getZones() <= 0 then\r\n        self.UI.setAttribute(\"scienceSelect\", \"active\", true)\r\n    end\r\nend\r\n\r\nfunction symbolClicked(player, value, id)\r\n    if value == \"True\" then\r\n        SelectedScience = id\r\n    else\r\n        SelectedScience = \"\"\r\n    end\r\nend\nend)\nreturn __bundle_require(\"Aganice.0cce5b.lua\")",
+          "LuaScriptState": "",
+          "XmlUI": ""
+        },
         {
           "GUID": "033702",
           "Name": "Card",
@@ -20682,62 +20752,6 @@
           "HideWhenFaceDown": true,
           "Hands": true,
           "CardID": 17922,
-          "SidewaysCard": false,
-          "CustomDeck": {
-            "179": {
-              "FaceURL": "http://cloud-3.steamusercontent.com/ugc/1636486705929106205/CA7416A75386B4E8F6DDEB0DFD7B2F1C29CB8A6D/",
-              "BackURL": "http://cloud-3.steamusercontent.com/ugc/1636486705929106999/04D8DFDFBC0125730A27E55F75E7703A7078E1AF/",
-              "NumWidth": 10,
-              "NumHeight": 7,
-              "BackIsHidden": true,
-              "UniqueBack": false,
-              "Type": 0
-            }
-          },
-          "LuaScript": "",
-          "LuaScriptState": "",
-          "XmlUI": ""
-        },
-        {
-          "GUID": "0cce5b",
-          "Name": "Card",
-          "Transform": {
-            "posX": 19.5751514,
-            "posY": 0.9736049,
-            "posZ": 5.31972456,
-            "rotX": 4.0043215E-08,
-            "rotY": 180.0,
-            "rotZ": 1.00069876E-07,
-            "scaleX": 1.25705588,
-            "scaleY": 1.0,
-            "scaleZ": 1.25705588
-          },
-          "Nickname": "Aganice",
-          "Description": "At the end of the game, you can replace 1 science symbol in your City or on your Leaders with the science symbol of your choice.",
-          "GMNotes": "",
-          "ColorDiffuse": {
-            "r": 0.713235259,
-            "g": 0.713235259,
-            "b": 0.713235259
-          },
-          "Tags": [
-            "Score"
-          ],
-          "LayoutGroupSortIndex": 0,
-          "Value": 0,
-          "Locked": false,
-          "Grid": true,
-          "Snap": true,
-          "IgnoreFoW": false,
-          "MeasureMovement": false,
-          "DragSelectable": true,
-          "Autoraise": true,
-          "Sticky": true,
-          "Tooltip": true,
-          "GridProjection": false,
-          "HideWhenFaceDown": true,
-          "Hands": true,
-          "CardID": 17903,
           "SidewaysCard": false,
           "CustomDeck": {
             "179": {
@@ -21434,9 +21448,9 @@
       "Transform": {
         "posX": 81.5,
         "posY": 1.64473975,
-        "posZ": 14.5002937,
-        "rotX": 0.000846901443,
-        "rotY": 179.999435,
+        "posZ": 14.5003071,
+        "rotX": 0.00084686355,
+        "rotY": 179.999283,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -21895,10 +21909,10 @@
       "Name": "Deck",
       "Transform": {
         "posX": 80.50006,
-        "posY": 1.77460051,
-        "posZ": 6.500134,
-        "rotX": 0.000846452545,
-        "rotY": 180.000137,
+        "posY": 1.77460039,
+        "posZ": 6.50014,
+        "rotX": 0.0008467659,
+        "rotY": 180.000183,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -23890,9 +23904,9 @@
       "Transform": {
         "posX": 84.50237,
         "posY": 1.64473975,
-        "posZ": 14.4999866,
-        "rotX": 0.000846842537,
-        "rotY": 180.000626,
+        "posZ": 14.5000019,
+        "rotX": 0.0008469981,
+        "rotY": 180.000732,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -24352,9 +24366,9 @@
       "Transform": {
         "posX": 84.49997,
         "posY": 1.64479887,
-        "posZ": 18.50038,
-        "rotX": 0.0008464663,
-        "rotY": 180.000488,
+        "posZ": 18.5003967,
+        "rotX": 0.0008469573,
+        "rotY": 180.000732,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -24812,12 +24826,12 @@
       "GUID": "511867",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 62.999836,
+        "posX": 62.9998322,
         "posY": 1.57251215,
-        "posZ": -26.00049,
-        "rotX": -0.000847543,
-        "rotY": -0.00317172473,
-        "rotZ": -1.32018831E-05,
+        "posZ": -26.0005131,
+        "rotX": -0.000836510153,
+        "rotY": -0.003274583,
+        "rotZ": -1.10413766E-05,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -25158,12 +25172,12 @@
       "GUID": "ff17ba",
       "Name": "Infinite_Bag",
       "Transform": {
-        "posX": 62.99984,
+        "posX": 62.999836,
         "posY": 1.57283735,
-        "posZ": -4.00023365,
-        "rotX": -0.0008433132,
-        "rotY": 359.99118,
-        "rotZ": -1.45849581E-05,
+        "posZ": -4.000238,
+        "rotX": -0.0008447459,
+        "rotY": 359.990936,
+        "rotZ": -1.40690254E-05,
         "scaleX": 1.0,
         "scaleY": 1.0,
         "scaleZ": 1.0
@@ -25506,8 +25520,8 @@
       "Transform": {
         "posX": 82.07173,
         "posY": 1.620236,
-        "posZ": -14.834219,
-        "rotX": 0.0008470089,
+        "posZ": -14.83423,
+        "rotX": 0.000846619543,
         "rotY": 180.001022,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
@@ -25670,9 +25684,9 @@
       "Transform": {
         "posX": 85.07173,
         "posY": 1.620236,
-        "posZ": -14.8342257,
-        "rotX": 0.000846844458,
-        "rotY": 180.000534,
+        "posZ": -14.8342361,
+        "rotX": 0.000846832641,
+        "rotY": 180.000565,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -25834,9 +25848,9 @@
       "Transform": {
         "posX": 88.07173,
         "posY": 1.60328221,
-        "posZ": -14.8342447,
-        "rotX": 0.000846783631,
-        "rotY": 180.001785,
+        "posZ": -14.8342571,
+        "rotX": 0.0008469553,
+        "rotY": 180.001877,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -25885,12 +25899,12 @@
       "GUID": "e5a814",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 62.9504471,
+        "posX": 62.9504356,
         "posY": 1.59006882,
-        "posZ": 11.9576263,
-        "rotX": 0.000877154758,
-        "rotY": 180.0014,
-        "rotZ": 6.49642E-05,
+        "posZ": 11.9576349,
+        "rotX": 0.0008770692,
+        "rotY": 180.001343,
+        "rotZ": 6.49799258E-05,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -25941,12 +25955,12 @@
       "GUID": "508a61",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 62.94617,
+        "posX": 62.94616,
         "posY": 1.79003882,
-        "posZ": 11.9541178,
-        "rotX": 0.000269494922,
+        "posZ": 11.9541283,
+        "rotX": 0.000268993754,
         "rotY": 179.997986,
-        "rotZ": 0.0002767253,
+        "rotZ": 0.0002767281,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -25997,12 +26011,12 @@
       "GUID": "366fce",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 62.9997177,
+        "posX": 62.9997025,
         "posY": 1.58996832,
-        "posZ": 5.00011253,
-        "rotX": 0.0008613666,
-        "rotY": 180.016617,
-        "rotZ": 3.307315E-05,
+        "posZ": 5.000118,
+        "rotX": 0.000862052664,
+        "rotY": 180.01651,
+        "rotZ": 3.30747062E-05,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -26053,12 +26067,12 @@
       "GUID": "22d26c",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 63.010498,
+        "posX": 63.0104866,
         "posY": 1.58976328,
-        "posZ": -9.026717,
-        "rotX": 0.000846848066,
-        "rotY": 180.004288,
-        "rotZ": 4.6912163E-08,
+        "posZ": -9.026722,
+        "rotX": 0.000846464245,
+        "rotY": 180.00415,
+        "rotZ": 1.1989907E-07,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -26109,12 +26123,12 @@
       "GUID": "7ab0fb",
       "Name": "Custom_Tile",
       "Transform": {
-        "posX": 62.9996567,
-        "posY": 1.78995132,
-        "posZ": 5.000041,
-        "rotX": 0.0010788549,
-        "rotY": 179.997925,
-        "rotZ": 0.000326750334,
+        "posX": 62.99965,
+        "posY": 1.78995121,
+        "posZ": 5.00004435,
+        "rotX": 0.00108073023,
+        "rotY": 179.997879,
+        "rotZ": 0.0003260266,
         "scaleX": 2.61136246,
         "scaleY": 1.0,
         "scaleZ": 2.61136246
@@ -26207,9 +26221,9 @@
       "Transform": {
         "posX": 89.50008,
         "posY": 1.60346448,
-        "posZ": -2.50004864,
-        "rotX": 0.0008468393,
-        "rotY": 180.000137,
+        "posZ": -2.50005054,
+        "rotX": 0.0008468513,
+        "rotY": 180.000214,
         "rotZ": 180.0,
         "scaleX": 1.25705588,
         "scaleY": 1.0,
@@ -26263,10 +26277,10 @@
       "Transform": {
         "posX": 74.0,
         "posY": 1.67099011,
-        "posZ": 24.000576,
-        "rotX": 0.0008468051,
-        "rotY": 180.001389,
-        "rotZ": 2.66392163E-07,
+        "posZ": 24.00061,
+        "rotX": 0.0008492668,
+        "rotY": 180.0015,
+        "rotZ": 1.34769337E-07,
         "scaleX": 5.43669558,
         "scaleY": 0.1614779,
         "scaleZ": 1.92262471
@@ -26275,9 +26289,9 @@
       "Description": "",
       "GMNotes": "",
       "ColorDiffuse": {
-        "r": 0.06715157,
-        "g": 0.217769355,
-        "b": 0.139186114
+        "r": 0.0671514943,
+        "g": 0.217769265,
+        "b": 0.139186025
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
